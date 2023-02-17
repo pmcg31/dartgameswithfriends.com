@@ -1,6 +1,7 @@
 .main {
   align-items: center;
   background-color: #3d4738;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -24,7 +25,6 @@
 }
 
 .title {
-  color: #fff;
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 auto;
