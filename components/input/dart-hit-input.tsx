@@ -2,11 +2,10 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Grid,
   HStack,
   useRadio,
   useRadioGroup,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 function RadioButton(props) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -15,21 +14,21 @@ function RadioButton(props) {
   const checkbox = getCheckboxProps();
 
   return (
-    <Box as="label">
+    <Box as='label'>
       <input {...input} />
       <Box
         {...checkbox}
-        bg="#3ba16a"
-        color="white"
-        cursor="pointer"
+        bg='#3ba16a'
+        color='white'
+        cursor='pointer'
         py={2}
         sx={{
           ...props.sx,
-          textAlign: "center",
-          fontWeight: "bold",
+          textAlign: 'center',
+          fontWeight: 'bold',
         }}
         _checked={{
-          bg: "darkgreen",
+          bg: 'darkgreen',
         }}
       >
         {props.children}
@@ -40,7 +39,7 @@ function RadioButton(props) {
 
 export default function DartHitInput(props) {
   // Styles to be applied to all buttons
-  const buttonStyles = { borderRadius: "0px", border: "none" };
+  const buttonStyles = { borderRadius: '0px', border: 'none' };
 
   // Array to hold scoring area buttons
   const areaButtons = [];
@@ -62,55 +61,59 @@ export default function DartHitInput(props) {
 
   // Create button for bull
   areaButtons.push(
-    <Button id="NB" key={25} gridColumn={7} gridRow={4} sx={buttonStyles}>
+    <Button id='NB' key={25} gridColumn={7} gridRow={4} sx={buttonStyles}>
       Bull
     </Button>
   );
 
   const { getRootProps, getRadioProps } = useRadioGroup({
-    name: "multiplier",
-    defaultValue: "X1",
+    name: 'multiplier',
+    defaultValue: 'X1',
     onChange: console.log,
   });
 
   const group = getRootProps();
-  const radioX1 = getRadioProps({ value: "X1" });
-  const radioX2 = getRadioProps({ value: "X2" });
-  const radioX3 = getRadioProps({ value: "X3" });
+  const radioX1 = getRadioProps({ value: 'X1' });
+  const radioX2 = getRadioProps({ value: 'X2' });
+  const radioX3 = getRadioProps({ value: 'X3' });
 
   return (
     <ButtonGroup
-      colorScheme="whiteAlpha"
+      colorScheme='whiteAlpha'
       spacing={0}
       sx={{
-        display: "grid",
-        gap: "3px",
-        templateColumns: "repeat(7, 1fr)",
-        templateRows: "repeat(4, 1fr)",
+        display: 'grid',
+        gap: '3px',
+        templateColumns: 'repeat(7, 1fr)',
+        templateRows: 'repeat(4, 1fr)',
       }}
     >
       <HStack
         {...group}
-        gridColumn="1 / span 7"
+        gridColumn='1 / span 7'
         sx={{
-          display: "grid",
-          gap: "3px",
-          gridTemplateColumns: "repeat(5, 1fr)",
+          display: 'grid',
+          gap: '3px',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+
+          '*:not(style)~*:not(style)': {
+            marginLeft: '0px',
+          },
         }}
       >
-        <RadioButton id="X1" key={0} sx={buttonStyles} {...radioX1}>
+        <RadioButton id='X1' key={0} sx={buttonStyles} {...radioX1}>
           1X
         </RadioButton>
-        <RadioButton id="X2" key={1} sx={buttonStyles} {...radioX2}>
+        <RadioButton id='X2' key={1} sx={buttonStyles} {...radioX2}>
           2X
         </RadioButton>
-        <RadioButton id="X3" key={2} sx={buttonStyles} {...radioX3}>
+        <RadioButton id='X3' key={2} sx={buttonStyles} {...radioX3}>
           3X
         </RadioButton>
-        <Button id="BO" key={3} colorScheme="yellow" sx={buttonStyles}>
+        <Button id='BO' key={3} colorScheme='yellow' sx={buttonStyles}>
           BO
         </Button>
-        <Button id="Miss" key={4} colorScheme="red" sx={buttonStyles}>
+        <Button id='Miss' key={4} colorScheme='red' sx={buttonStyles}>
           Miss
         </Button>
       </HStack>
