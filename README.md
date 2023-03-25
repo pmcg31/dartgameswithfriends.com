@@ -38,3 +38,41 @@ Query OK, 0 rows affected (0.01 sec)
 ## Guide Used for Setting Up ESLint and Prettier
 
 [This guide](https://paulintrognon.fr/blog/typescript-prettier-eslint-next-js) was followed to set up ESLint and Prettier. Some rules and options were changed from what the guide states; this is easy to see by looking at the relevant config files.
+
+## Deploying (Chris & Rich only)
+
+Log in to the server:
+
+```
+ssh darts-dartsapp
+```
+
+Go to the repo:
+
+```
+cd git/dartgameswithfriends.com
+```
+
+Pull the latest changes:
+
+```
+git pull
+```
+
+Update dependencies:
+
+```
+yarn
+```
+
+Rebuild site:
+
+```
+yarn build
+```
+
+Restart site to make changes active:
+
+```
+pm2 restart dartsapp
+```
