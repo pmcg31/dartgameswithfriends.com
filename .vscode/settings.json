@@ -1,7 +1,9 @@
 {
   // "WillLuke.nextjs.addTypesOnSave": true,
   // "WillLuke.nextjs.hasPrompted": true,
-  "editor.codeActionsOnSave": {},
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
