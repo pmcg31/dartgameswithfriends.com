@@ -1,4 +1,11 @@
 import {
+  DartHitEvent,
+  DartHitKind,
+  DartHitMultiplier,
+  multiplierFromString,
+  scoreAreaFromString
+} from '@/lib/dart-types';
+import {
   Box,
   Button,
   ButtonGroup,
@@ -37,65 +44,45 @@ function RadioButton(props) {
   );
 }
 
-function shiftToSingle() {
-  const numberButtons = document.querySelectorAll(
-    '.number_button'
-  ) as NodeListOf<HTMLButtonElement>;
-  numberButtons.forEach((button) => {
-    let number = button.id.substring(1);
-    if (number == 'B') {
-      number = 'Bull';
-      button.disabled = false;
-    }
-    button.textContent = number;
-  });
-}
+type DartHitInputProps = {
+  autoResetToSingle?: boolean;
+  onDartHit?: (e: DartHitEvent) => void;
+};
 
-function shiftToDouble() {
-  const numberButtons = document.querySelectorAll(
-    '.number_button'
-  ) as NodeListOf<HTMLButtonElement>;
-  numberButtons.forEach((button) => {
-    let number = button.id.substring(1);
-    if (number == 'B') {
-      number = 'D Bull';
-      button.disabled = false;
-    } else {
-      number = `D${number}`;
-    }
-    button.textContent = number;
+export default function DartHitInput(props: DartHitInputProps) {
+  const { getRootProps, getRadioProps, value, setValue } = useRadioGroup({
+    name: 'multiplier',
+    defaultValue: 'X1'
   });
-}
 
-function shiftToTriple() {
-  const numberButtons = document.querySelectorAll(
-    '.number_button'
-  ) as NodeListOf<HTMLButtonElement>;
-  numberButtons.forEach((button) => {
-    let number = button.id.substring(1);
-    if (number == 'B') {
-      number = 'Bull';
-      button.disabled = true;
-    } else {
-      number = `T${number}`;
+  const multiplier = multiplierFromString(value as string);
+
+  function onButtonClicked(event: React.MouseEvent<HTMLButtonElement>) {
+    // console.log(
+    //   `${
+    //     (event.target as HTMLButtonElement).id
+    //   } clicked, multipler is ${multiplier}, value is ${value}`
+    // );
+    if (props.onDartHit) {
+      const id = (event.target as HTMLButtonElement).id;
+
+      if (id === 'Miss') {
+        props.onDartHit({ kind: DartHitKind.Miss });
+      } else if (id === 'BO') {
+        props.onDartHit({ kind: DartHitKind.BounceOut });
+      } else {
+        props.onDartHit({
+          kind: DartHitKind.Hit,
+          multiplier,
+          scoreArea: scoreAreaFromString(id)
+        });
+      }
     }
-    button.textContent = number;
-  });
-}
-
-function onMultiplierChanged(event) {
-  if (event === 'X1') {
-    shiftToSingle();
-  } else if (event === 'X2') {
-    shiftToDouble();
-  } else if (event === 'X3') {
-    shiftToTriple();
-  } else {
-    console.log(`unexpected multiplier change event: ${event}`);
+    if (props.autoResetToSingle && props.autoResetToSingle === true) {
+      setValue('X1');
+    }
   }
-}
 
-export default function DartHitInput() {
   // Styles to be applied to all buttons
   const buttonStyles = { borderRadius: '0px', border: 'none' };
 
@@ -104,6 +91,19 @@ export default function DartHitInput() {
 
   // Create buttons for the numbers
   for (let idx = 0; idx < 20; idx++) {
+    let label = '';
+    switch (multiplier) {
+      case DartHitMultiplier.X3:
+        label = `T${idx + 1}`;
+        break;
+      case DartHitMultiplier.X2:
+        label = `D${idx + 1}`;
+        break;
+      case DartHitMultiplier.X1:
+      default:
+        label = `${idx + 1}`;
+        break;
+    }
     areaButtons.push(
       <Button
         id={`N${idx + 1}`}
@@ -112,13 +112,31 @@ export default function DartHitInput() {
         gridColumn={(idx % 7) + 1}
         gridRow={idx / 7 + 2}
         sx={buttonStyles}
+        onClick={onButtonClicked}
       >
-        {idx + 1}
+        {label}
       </Button>
     );
   }
 
   // Create button for bull
+  let label = '';
+  let disabled = false;
+  switch (multiplier) {
+    case DartHitMultiplier.X3:
+      label = 'Bull';
+      disabled = true;
+      break;
+    case DartHitMultiplier.X2:
+      label = 'D Bull';
+      disabled = false;
+      break;
+    case DartHitMultiplier.X1:
+    default:
+      label = 'Bull';
+      disabled = false;
+      break;
+  }
   areaButtons.push(
     <Button
       id='NB'
@@ -127,16 +145,14 @@ export default function DartHitInput() {
       gridColumn={7}
       gridRow={4}
       sx={buttonStyles}
+      onClick={onButtonClicked}
+      isDisabled={disabled}
     >
-      Bull
+      {label}
     </Button>
   );
 
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'multiplier',
-    defaultValue: 'X1',
-    onChange: onMultiplierChanged
-  });
+  // setValue(multiplierToString(multiplier));
 
   const group = getRootProps();
   const radioX1 = getRadioProps({ value: 'X1' });
@@ -173,10 +189,22 @@ export default function DartHitInput() {
         <RadioButton id='X3' key={2} sx={buttonStyles} {...radioX3}>
           3X
         </RadioButton>
-        <Button id='BO' key={3} colorScheme='yellow' sx={buttonStyles}>
+        <Button
+          id='BO'
+          key={3}
+          colorScheme='yellow'
+          sx={buttonStyles}
+          onClick={onButtonClicked}
+        >
           BO
         </Button>
-        <Button id='Miss' key={4} colorScheme='red' sx={buttonStyles}>
+        <Button
+          id='Miss'
+          key={4}
+          colorScheme='red'
+          sx={buttonStyles}
+          onClick={onButtonClicked}
+        >
           Miss
         </Button>
       </HStack>
