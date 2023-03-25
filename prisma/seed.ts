@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const gt_301 = await prisma.gameType.upsert({
+  await prisma.gameType.upsert({
     where: { name: '301' },
     update: {},
     create: {
@@ -39,7 +39,7 @@ async function main() {
     }
   });
 
-  const gt_cricket = await prisma.gameType.upsert({
+  await prisma.gameType.upsert({
     where: { name: 'cricket' },
     update: {},
     create: {

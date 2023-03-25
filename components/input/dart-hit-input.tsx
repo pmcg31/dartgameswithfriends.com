@@ -95,7 +95,7 @@ function onMultiplierChanged(event) {
   }
 }
 
-export default function DartHitInput(props) {
+export default function DartHitInput() {
   // Styles to be applied to all buttons
   const buttonStyles = { borderRadius: '0px', border: 'none' };
 

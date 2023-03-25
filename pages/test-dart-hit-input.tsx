@@ -1,6 +1,6 @@
 import DartHitInput from '@/components/input/dart-hit-input';
 
-export default function TestDartHitInput(props) {
+export default function TestDartHitInput() {
   return (
     <main>
       <div
