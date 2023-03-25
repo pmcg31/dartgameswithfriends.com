@@ -157,14 +157,11 @@ export default function DartHitInput(props) {
       <HStack
         {...group}
         gridColumn="1 / span 7"
+        spacing={0}
         sx={{
           display: "grid",
           gap: "3px",
           gridTemplateColumns: "repeat(5, 1fr)",
-
-          "*:not(style)~*:not(style)": {
-            marginLeft: "0px",
-          },
         }}
       >
         <RadioButton id="X1" key={0} sx={buttonStyles} {...radioX1}>
