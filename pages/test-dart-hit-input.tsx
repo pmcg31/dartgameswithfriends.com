@@ -53,15 +53,24 @@ export default function TestDartHitInput() {
         <div
           style={{
             display: 'flex',
-            gap: '20px',
             padding: '10px',
             color: 'white'
           }}
         >
           <p>Dart Hit:</p>
-          <p ref={dartHitP}>--</p>
+          <p
+            ref={dartHitP}
+            style={{ paddingLeft: '10px', paddingRight: '10px' }}
+          >
+            --
+          </p>
           <p>Points:</p>
-          <p ref={pointsP}>--</p>
+          <p
+            ref={pointsP}
+            style={{ paddingLeft: '10px', paddingRight: '10px' }}
+          >
+            --
+          </p>
         </div>
       </div>
     </main>
