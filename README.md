@@ -1,5 +1,19 @@
 # Dart Games with Friends
 
+## Setup After Cloning this Repo
+
+First run yarn to install dependencies:
+
+```
+yarn
+```
+
+Then run husky install to enable husky:
+
+```
+yarn husky install
+```
+
 ## MySQL Setup
 
 Log in to MySQL as root. This will vary by platform. On linux:
