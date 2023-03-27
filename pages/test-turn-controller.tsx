@@ -121,7 +121,7 @@ export default function TestTurnController(): JSX.Element {
 
   return (
     <main>
-      <Grid templateRows='auto 1rem 1fr' justifyContent='center'>
+      <Grid templateRows='auto 1rem 1fr' maxWidth={'600px'} margin={'0 auto'}>
         <Grid
           templateRows='auto auto'
           backgroundColor='var(--background-color)'

@@ -168,8 +168,8 @@ export default function DartHitInput(props: DartHitInputProps) {
         ...props.sx,
         display: 'grid',
         gap: '3px',
-        templateColumns: 'repeat(7, 1fr)',
-        templateRows: 'repeat(4, 1fr)'
+        gridTemplateColumns: 'repeat(7, 1fr)',
+        gridTemplateRows: 'repeat(4, 1fr)'
       }}
     >
       <HStack
