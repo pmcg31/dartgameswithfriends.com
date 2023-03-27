@@ -46,7 +46,7 @@ export default function TestDartHitInput() {
           padding: '20px',
           maxWidth: '600px',
           margin: 'auto',
-          backgroundColor: '#444'
+          backgroundColor: 'var(--background-color)'
         }}
       >
         <DartHitInput autoResetToSingle={true} onDartHit={onDartHit} />

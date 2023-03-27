@@ -52,6 +52,18 @@ export function multiplierToString(multiplier: DartHitMultiplier): string {
   }
 }
 
+export function multiplierToDisplayString(
+  multiplier: DartHitMultiplier
+): string {
+  if (multiplier === DartHitMultiplier.X2) {
+    return 'D';
+  } else if (multiplier === DartHitMultiplier.X3) {
+    return 'T';
+  } else {
+    return '';
+  }
+}
+
 export function multiplierFromString(s: string): DartHitMultiplier {
   if (s === 'X3') {
     return DartHitMultiplier.X3;
@@ -85,16 +97,19 @@ export function scoreAreaFromString(s: string): DartHitScoreArea {
   return undefined;
 }
 
+export function scoreAreaToString(area: DartHitScoreArea): string {
+  if (area <= 20) {
+    return `${area}`;
+  } else {
+    return 'Bull';
+  }
+}
+
 export function dartHitEventToString(event: DartHitEvent): string {
   if (event.kind === DartHitKind.Miss || event.kind === DartHitKind.BounceOut) {
     return DartHitKind[event.kind];
   } else {
-    let multStr = '';
-    if (event.multiplier === DartHitMultiplier.X2) {
-      multStr = 'D';
-    } else if (event.multiplier === DartHitMultiplier.X3) {
-      multStr = 'T';
-    }
+    const multStr = multiplierToDisplayString(event.multiplier);
     let area = '';
     if (event.scoreArea <= 20) {
       area = `${multStr}${event.scoreArea}`;

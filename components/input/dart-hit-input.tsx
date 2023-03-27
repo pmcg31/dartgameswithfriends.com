@@ -25,7 +25,7 @@ function RadioButton(props) {
       <input {...input} />
       <Box
         {...checkbox}
-        bg='#3ba16a'
+        bg='var(--button-green)'
         color='white'
         cursor='pointer'
         py={2}
@@ -47,6 +47,7 @@ function RadioButton(props) {
 type DartHitInputProps = {
   autoResetToSingle?: boolean;
   onDartHit?: (e: DartHitEvent) => void;
+  sx?: object;
 };
 
 export default function DartHitInput(props: DartHitInputProps) {
@@ -164,6 +165,7 @@ export default function DartHitInput(props: DartHitInputProps) {
       colorScheme='whiteAlpha'
       spacing={0}
       sx={{
+        ...props.sx,
         display: 'grid',
         gap: '3px',
         templateColumns: 'repeat(7, 1fr)',

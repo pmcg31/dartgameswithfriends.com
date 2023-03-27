@@ -1,4 +1,11 @@
 :root {
+  --bright-text-color: #aaa;
+  --middle-text-color: #888;
+  --dim-text-color: #666;
+  --button-green: hsl(148 46% 43% / 1);
+  --text-green: hsl(148 46% 65% / 1);
+  --background-color: #444;
+
   --max-width: 1100px;
   --border-radius: 12px;
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
