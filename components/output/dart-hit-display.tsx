@@ -58,9 +58,10 @@ export default function DartHitDisplay(
       const pointsStr = `${dartHitEventToPoints(props.event)}`;
       pointsDisplay = (
         <Flex
-          marginTop='-0.5rem'
           justifyContent='center'
           alignItems='center'
+          lineHeight='0.2rem'
+          paddingBottom='0.8rem'
           sx={{
             '.points': {
               color: 'var(--middle-text-color)'

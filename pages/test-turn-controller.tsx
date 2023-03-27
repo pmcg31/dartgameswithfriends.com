@@ -162,7 +162,7 @@ export default function TestTurnController(): JSX.Element {
             </Flex>
           </Grid>
           <Flex paddingTop='1rem' direction='column'>
-            <p>End Turn Timeout</p>
+            <p>End Turn Timeout (ms)</p>
             <NumberInput
               step={250}
               defaultValue={playerChangeTimeout_ms}

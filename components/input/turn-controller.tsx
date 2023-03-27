@@ -127,7 +127,8 @@ export default function TurnController(
     '.playerName': {
       color: 'var(--bright-text-color)',
       fontSize: '1.5rem',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      lineHeight: '0.8em'
     },
     '.playerTeam': { color: 'var(--bright-text-color)', fontSize: '0.8rem' }
   };
