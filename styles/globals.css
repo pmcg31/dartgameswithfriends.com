@@ -6,6 +6,10 @@
   --text-green: hsl(148 46% 65% / 1);
   --background-color: #444;
 
+  --brand-color: hsl(100, 12%, 25%);
+  --header-color: hsl(82.5deg 14.29% 10.98%);
+  --footer-color: var(--header-color);
+
   --max-width: 1100px;
   --border-radius: 12px;
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
