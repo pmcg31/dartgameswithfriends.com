@@ -1,10 +1,13 @@
 import '@/styles/globals.css';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ChakraProvider } from '@chakra-ui/react';
 
 export default function App({ Component, pageProps }) {
   return (
-    <ChakraProvider>
-      <Component {...pageProps} />
-    </ChakraProvider>
+    <ClerkProvider {...pageProps}>
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </ClerkProvider>
   );
 }
