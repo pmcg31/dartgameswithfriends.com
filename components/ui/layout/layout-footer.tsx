@@ -7,12 +7,11 @@ export default function LayoutFooter(): JSX.Element {
       color={'white'}
       padding={'1rem'}
       justifyItems={'center'}
-      sx={{ p: { opacity: '30%' } }}
     >
       <Flex
         wrap={'wrap'}
         justifyContent={'center'}
-        sx={{ p: { padding: '0 0.25rem' } }}
+        sx={{ p: { padding: '0 0.25rem', opacity: '30%' } }}
       >
         <p>Copyright ©️{new Date().getFullYear()}</p>
         <p>The Dart Games With Friends Guys</p>
