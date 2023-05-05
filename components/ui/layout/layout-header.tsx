@@ -2,11 +2,10 @@ import { Grid } from '@chakra-ui/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
 export default function LayoutHeader({
-  showSignIn
+  hideSignIn
 }: {
-  showSignIn?: boolean;
+  hideSignIn?: boolean;
 }): JSX.Element {
-  const showSignInFinal = showSignIn == undefined || showSignIn;
   return (
     <Grid
       backgroundColor={'var(--header-color)'}
@@ -16,10 +15,10 @@ export default function LayoutHeader({
       sx={{ '.cl-userButtonOuterIdentifier': { color: '#fff' } }}
     >
       <p>This is the header</p>
-      {showSignInFinal && (
+      {!(hideSignIn != undefined && hideSignIn) && (
         <>
           <SignedIn>
-            <UserButton showName={true} />
+            <UserButton showName />
           </SignedIn>
           <SignedOut>
             <SignInButton />

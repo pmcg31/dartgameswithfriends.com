@@ -4,7 +4,7 @@ import { SignUp } from '@clerk/nextjs';
 
 export default function Page() {
   return (
-    <Layout title='Sign Up' showSignIn={false}>
+    <Layout title='Sign Up' hideSignIn>
       <Flex alignItems={'center'} justifyItems={'center'}>
         <SignUp
           appearance={{

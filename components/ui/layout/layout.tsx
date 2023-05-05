@@ -27,11 +27,11 @@ import LayoutHeader from './layout-header';
 
 export default function Layout({
   title,
-  showSignIn,
+  hideSignIn,
   children
 }: {
   title: string;
-  showSignIn?: boolean;
+  hideSignIn?: boolean;
   children: JSX.Element;
 }): JSX.Element {
   let pageTitle = 'Dart Games With Friends';
@@ -65,7 +65,7 @@ export default function Layout({
           <link rel='icon' href='/favicon.ico' />
         </Head>
         <Grid id='header-area' gridArea={'header'} justifyItems={'stretch'}>
-          <LayoutHeader showSignIn={showSignIn} />
+          <LayoutHeader hideSignIn={hideSignIn} />
         </Grid>
 
         <Grid
