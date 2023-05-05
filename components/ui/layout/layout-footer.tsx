@@ -1,4 +1,4 @@
-import { Grid } from '@chakra-ui/react';
+import { Flex, Grid } from '@chakra-ui/react';
 
 export default function LayoutFooter(): JSX.Element {
   return (
@@ -9,9 +9,14 @@ export default function LayoutFooter(): JSX.Element {
       justifyItems={'center'}
       sx={{ p: { opacity: '30%' } }}
     >
-      <p>
-        Copyright ©️{new Date().getFullYear()} The Dart Games With Friends Guys
-      </p>
+      <Flex
+        wrap={'wrap'}
+        justifyContent={'center'}
+        sx={{ p: { padding: '0 0.25rem' } }}
+      >
+        <p>Copyright ©️{new Date().getFullYear()}</p>
+        <p>The Dart Games With Friends Guys</p>
+      </Flex>
     </Grid>
   );
 }
