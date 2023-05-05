@@ -62,6 +62,7 @@ export default function Layout({
             content='The next big thing in online darts'
           />
           <meta name='viewport' content='width=device-width, initial-scale=1' />
+          <meta name='referrer' content='no-referrer' />
           <link rel='icon' href='/favicon.ico' />
         </Head>
         <Grid id='header-area' gridArea={'header'} justifyItems={'stretch'}>
