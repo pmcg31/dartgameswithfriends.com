@@ -13,7 +13,7 @@ export default function LayoutFooter(): JSX.Element {
         justifyContent={'center'}
         sx={{ p: { padding: '0 0.25rem', opacity: '30%' } }}
       >
-        <p>Copyright ©️{new Date().getFullYear()}</p>
+        <p>Copyright &copy;{new Date().getFullYear()}</p>
         <p>The Dart Games With Friends Guys</p>
       </Flex>
     </Grid>

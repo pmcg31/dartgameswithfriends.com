@@ -19,7 +19,12 @@ export default function LayoutHeader({
       {!(hideSignIn != undefined && hideSignIn) && (
         <>
           <SignedIn>
-            <UserButton showName />
+            <UserButton
+              showName
+              userProfileMode={'navigation'}
+              userProfileUrl={'/user-profile'}
+              afterSignOutUrl={'/'}
+            />
           </SignedIn>
           <SignedOut>
             <SignInButton />
