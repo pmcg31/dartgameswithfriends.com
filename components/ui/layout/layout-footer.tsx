@@ -6,8 +6,12 @@ export default function LayoutFooter(): JSX.Element {
       backgroundColor={'var(--footer-color)'}
       color={'white'}
       padding={'1rem'}
+      justifyItems={'center'}
+      sx={{ p: { opacity: '30%' } }}
     >
-      <p>This is the footer</p>
+      <p>
+        Copyright ©️{new Date().getFullYear()} The Dart Games With Friends Guys
+      </p>
     </Grid>
   );
 }

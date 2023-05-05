@@ -11,10 +11,11 @@ export default function LayoutHeader({
       backgroundColor={'var(--header-color)'}
       color={'white'}
       padding={'1rem'}
+      alignItems={'center'}
       templateColumns={'1fr auto'}
       sx={{ '.cl-userButtonOuterIdentifier': { color: '#fff' } }}
     >
-      <p>This is the header</p>
+      <p>The next big thing in online darts!</p>
       {!(hideSignIn != undefined && hideSignIn) && (
         <>
           <SignedIn>
