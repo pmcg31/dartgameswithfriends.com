@@ -1,3 +1,12 @@
 module.exports = {
-  prefixIds: false
+  plugins: [
+    {
+      name: 'preset-default',
+      params: {
+        overrides: {
+          cleanupIds: false
+        }
+      }
+    }
+  ]
 };
