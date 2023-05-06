@@ -11,7 +11,9 @@ export default function LayoutFooter(): JSX.Element {
       <Flex
         wrap={'wrap'}
         justifyContent={'center'}
-        sx={{ p: { padding: '0 0.25rem', opacity: '30%' } }}
+        sx={{
+          p: { padding: '0 0.25rem', opacity: '30%', textAlign: 'center' }
+        }}
       >
         <p>Copyright &copy;{new Date().getFullYear()}</p>
         <p>The Dart Games With Friends Guys</p>
