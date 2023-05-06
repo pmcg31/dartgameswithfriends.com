@@ -1,5 +1,7 @@
-import { Grid } from '@chakra-ui/react';
+import { AspectRatio, Grid } from '@chakra-ui/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import Link from 'next/link';
+import Logo from './dgwf_logo.svg';
 
 export default function LayoutHeader({
   hideSignIn
@@ -15,7 +17,19 @@ export default function LayoutHeader({
       templateColumns={'1fr auto'}
       sx={{ '.cl-userButtonOuterIdentifier': { color: '#fff' } }}
     >
-      <p>The next big thing in online darts!</p>
+      <Link href='/'>
+        <AspectRatio
+          ratio={1}
+          maxW={'3rem'}
+          opacity={'50%'}
+          sx={{
+            '.stroke_me': { stroke: '#fff' },
+            '.fill_me': { fill: '#fff' }
+          }}
+        >
+          <Logo />
+        </AspectRatio>
+      </Link>
       {!(hideSignIn != undefined && hideSignIn) && (
         <>
           <SignedIn>
