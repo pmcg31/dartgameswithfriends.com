@@ -11,12 +11,28 @@ export default function Dashboard() {
   if (isLoaded) {
     if (isSignedIn) {
       content = (
-        <Flex width={'75dvw'} color={'white'} direction={'column'} gap={'1rem'}>
-          <Flex pt={'1rem'} gap={'1rem'}>
-            <Avatar src={user.profileImageUrl} />
-            <Heading>{user.username}</Heading>
-          </Flex>
-          <Flex>
+        <Flex
+          width={'100dvw'}
+          maxW={'120ch'}
+          p={'1rem'}
+          color={'white'}
+          direction={'column'}
+          gap={'1rem'}
+        >
+          <Flex
+            direction={{ base: 'column', sm: 'row' }}
+            alignItems={'center'}
+            justifyContent={{
+              base: 'flex-start',
+              sm: 'space-between'
+            }}
+            gap={'1rem'}
+            wrap={'wrap'}
+          >
+            <Flex gap={'1rem'}>
+              <Avatar src={user.profileImageUrl} />
+              <Heading>{user.username}</Heading>
+            </Flex>
             <Button
               colorScheme={'blackAlpha'}
               onClick={() => {
