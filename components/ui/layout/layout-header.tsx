@@ -1,7 +1,7 @@
 import { AspectRatio, Flex } from '@chakra-ui/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import Logo from './dgwf_logo.svg';
+import DGWFLogo from '../brand/DGWFLogo';
 
 export default function LayoutHeader({
   hideSignIn
@@ -21,16 +21,8 @@ export default function LayoutHeader({
       }}
     >
       <Link href='/'>
-        <AspectRatio
-          ratio={1}
-          width={'3rem'}
-          opacity={'50%'}
-          sx={{
-            '.stroke_me': { stroke: '#fff' },
-            '.fill_me': { fill: '#fff' }
-          }}
-        >
-          <Logo />
+        <AspectRatio ratio={1} width={'3rem'} opacity={'50%'}>
+          <DGWFLogo />
         </AspectRatio>
       </Link>
       <Flex flexGrow={1} p={'0 1rem'}>
