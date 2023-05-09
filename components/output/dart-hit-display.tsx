@@ -25,7 +25,7 @@ export default function DartHitDisplay(
       fontWeight: 'bold'
     }
   };
-  let dartDisplay: JSX.Element = undefined;
+  let dartDisplay: JSX.Element | undefined = undefined;
   if (props.event) {
     if (props.event.kind === DartHitKind.Miss) {
       dartDisplay = (
@@ -40,19 +40,21 @@ export default function DartHitDisplay(
         </Flex>
       );
     } else {
-      const multDispStr = multiplierToDisplayString(props.event.multiplier);
-      const scoreAreaStr = scoreAreaToString(props.event.scoreArea);
-      dartDisplay = (
-        <Flex sx={dartDisplayStyles} alignItems='baseline'>
-          <p className='multiplier'>{multDispStr}</p>
-          <p className='scoreArea'>{scoreAreaStr}</p>
-        </Flex>
-      );
+      if (props.event.multiplier && props.event.scoreArea) {
+        const multDispStr = multiplierToDisplayString(props.event.multiplier);
+        const scoreAreaStr = scoreAreaToString(props.event.scoreArea);
+        dartDisplay = (
+          <Flex sx={dartDisplayStyles} alignItems='baseline'>
+            <p className='multiplier'>{multDispStr}</p>
+            <p className='scoreArea'>{scoreAreaStr}</p>
+          </Flex>
+        );
+      }
     }
   }
 
   // Points display
-  let pointsDisplay: JSX.Element = undefined;
+  let pointsDisplay: JSX.Element | undefined = undefined;
   if (!props.hidePoints) {
     if (props.event) {
       const pointsStr = `${dartHitEventToPoints(props.event)}`;

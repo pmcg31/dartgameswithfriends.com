@@ -25,17 +25,16 @@ import Head from 'next/head';
 import LayoutFooter from './layout-footer';
 import LayoutHeader from './layout-header';
 import { useUser } from '@clerk/nextjs';
-import { useEffect } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 
 export default function Layout({
   title,
   hideSignIn,
   children
-}: {
+}: PropsWithChildren<{
   title: string;
   hideSignIn?: boolean;
-  children: JSX.Element;
-}): JSX.Element {
+}>): JSX.Element {
   // Use clerk user
   const { isLoaded, isSignedIn, user } = useUser();
 

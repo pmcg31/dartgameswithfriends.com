@@ -13,7 +13,7 @@ type Error = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Player | Error>
+  res: NextApiResponse<Player | Error | null>
 ) {
   // Get user id from url
   const { id } = req.query;

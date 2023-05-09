@@ -26,11 +26,11 @@ export default function TestTurnController(): JSX.Element {
   const [hidePoints, setHidePoints] = useState(false);
   const [dartsPerTurn, setDartsPerTurn] = useState<1 | 2 | 3>(3);
   const [playerChangeTimeout_ms, setPlayerChangeTimeout_ms] = useState(3000);
-  const dartHitP = useRef();
-  const pointsP = useRef();
-  const playerP = useRef();
-  const teamP = useRef();
-  const undoP = useRef();
+  const dartHitP = useRef<HTMLParagraphElement>(null);
+  const pointsP = useRef<HTMLParagraphElement>(null);
+  const playerP = useRef<HTMLParagraphElement>(null);
+  const teamP = useRef<HTMLParagraphElement>(null);
+  const undoP = useRef<HTMLParagraphElement>(null);
 
   const players: TurnControllerPlayer[] = [
     { name: 'Chris', team: 'Donkey Punchers' },
@@ -39,9 +39,9 @@ export default function TestTurnController(): JSX.Element {
   ];
 
   // References to timeouts
-  let dartHitTimeoutID: NodeJS.Timeout = undefined;
-  let playerChangeTimeoutID: NodeJS.Timeout = undefined;
-  let undoTimeoutID: NodeJS.Timeout = undefined;
+  let dartHitTimeoutID: NodeJS.Timeout | undefined = undefined;
+  let playerChangeTimeoutID: NodeJS.Timeout | undefined = undefined;
+  let undoTimeoutID: NodeJS.Timeout | undefined = undefined;
 
   function onAutoResetSingleChanged(event: string) {
     setAutoResetSingle(event === '1');

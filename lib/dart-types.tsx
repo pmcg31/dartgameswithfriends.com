@@ -79,7 +79,7 @@ export function multiplierFromString(s: string): DartHitMultiplier {
   }
 }
 
-export function scoreAreaFromString(s: string): DartHitScoreArea {
+export function scoreAreaFromString(s: string): DartHitScoreArea | undefined {
   if (s.startsWith('N')) {
     const s2 = s.substring(1);
 
@@ -109,18 +109,22 @@ export function dartHitEventToString(event: DartHitEvent): string {
   if (event.kind === DartHitKind.Miss || event.kind === DartHitKind.BounceOut) {
     return DartHitKind[event.kind];
   } else {
-    const multStr = multiplierToDisplayString(event.multiplier);
-    let area = '';
-    if (event.scoreArea <= 20) {
-      area = `${multStr}${event.scoreArea}`;
-    } else {
-      if (event.multiplier !== DartHitMultiplier.X1) {
-        area = `${multStr} Bull`;
+    if (event.multiplier && event.scoreArea) {
+      const multStr = multiplierToDisplayString(event.multiplier);
+      let area = '';
+      if (event.scoreArea <= 20) {
+        area = `${multStr}${event.scoreArea}`;
       } else {
-        area = 'Bull';
+        if (event.multiplier !== DartHitMultiplier.X1) {
+          area = `${multStr} Bull`;
+        } else {
+          area = 'Bull';
+        }
       }
+      return area;
+    } else {
+      return '??';
     }
-    return area;
   }
 }
 
@@ -128,10 +132,14 @@ export function dartHitEventToPoints(event: DartHitEvent): number {
   if (event.kind === DartHitKind.Miss || event.kind === DartHitKind.BounceOut) {
     return 0;
   } else {
-    if (event.scoreArea <= 20) {
-      return event.multiplier * event.scoreArea;
+    if (event.multiplier && event.scoreArea) {
+      if (event.scoreArea <= 20) {
+        return event.multiplier * event.scoreArea;
+      } else {
+        return event.multiplier * 25;
+      }
     } else {
-      return event.multiplier * 25;
+      return 0;
     }
   }
 }

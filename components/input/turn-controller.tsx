@@ -30,8 +30,8 @@ export type TurnControllerProps = {
 export default function TurnController(
   props: TurnControllerProps
 ): JSX.Element {
-  const [dartHitEvents, setDartHitEvents] = useState([]);
-  const [currentPlayerIdx, setCurrentPlayerIdx] = useState(0);
+  const [dartHitEvents, setDartHitEvents] = useState<DartHitEvent[]>([]);
+  const [currentPlayerIdx, setCurrentPlayerIdx] = useState<number>(0);
 
   // Get darts per turn from props (default to 3)
   const dartsPerTurn = props.dartsPerTurn || 3;
@@ -40,7 +40,7 @@ export default function TurnController(
   const playerChangeTimeout_ms = props.playerChangeTimeout_ms || 3000;
 
   // Reference to current timeout
-  let timeoutID: NodeJS.Timeout = undefined;
+  let timeoutID: NodeJS.Timeout | undefined = undefined;
 
   function advanceToNextPlayer() {
     // Clear timeoutID
@@ -88,7 +88,7 @@ export default function TurnController(
   }
 
   // Check for turn ended
-  let turnChangingDisplay: JSX.Element = undefined;
+  let turnChangingDisplay: JSX.Element | undefined = undefined;
   if (dartHitEvents.length === dartsPerTurn) {
     // Set up turn changing display
     turnChangingDisplay = (
@@ -132,7 +132,7 @@ export default function TurnController(
     },
     '.playerTeam': { color: 'var(--bright-text-color)', fontSize: '0.8rem' }
   };
-  let playerDisplay: JSX.Element = undefined;
+  let playerDisplay: JSX.Element | undefined = undefined;
   if (props.players[currentPlayerIdx].team) {
     playerDisplay = (
       <Flex sx={playerDisplayStyles} direction='column'>

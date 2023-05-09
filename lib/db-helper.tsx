@@ -1,6 +1,6 @@
 import { Player, PrismaClient } from '@prisma/client';
 
-export async function getPlayer(id: string): Promise<Player> {
+export async function getPlayer(id: string): Promise<Player | null> {
   const prisma = new PrismaClient();
 
   return prisma.player.findUnique({ where: { id: id } });

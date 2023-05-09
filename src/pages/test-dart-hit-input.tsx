@@ -6,11 +6,11 @@ import {
 } from '@/lib/dart-types';
 import { useRef } from 'react';
 
-let timeoutID: NodeJS.Timeout = undefined;
+let timeoutID: NodeJS.Timeout | undefined = undefined;
 
 export default function TestDartHitInput() {
-  const dartHitP = useRef();
-  const pointsP = useRef();
+  const dartHitP = useRef<HTMLParagraphElement>(null);
+  const pointsP = useRef<HTMLParagraphElement>(null);
 
   function onDartHit(event: DartHitEvent) {
     // If there is a timer out there,
@@ -20,16 +20,21 @@ export default function TestDartHitInput() {
     }
 
     // Show the current values
-    (dartHitP.current as HTMLParagraphElement).textContent =
-      dartHitEventToString(event);
-    (
-      pointsP.current as HTMLParagraphElement
-    ).textContent = `${dartHitEventToPoints(event)}`;
+    if (dartHitP.current) {
+      dartHitP.current.textContent = dartHitEventToString(event);
+    }
+    if (pointsP.current) {
+      pointsP.current.textContent = `${dartHitEventToPoints(event)}`;
+    }
 
     // Clear current values in a second
     timeoutID = setTimeout(() => {
-      (dartHitP.current as HTMLParagraphElement).textContent = '--';
-      (pointsP.current as HTMLParagraphElement).textContent = '--';
+      if (dartHitP.current) {
+        dartHitP.current.textContent = '--';
+      }
+      if (pointsP.current) {
+        pointsP.current.textContent = '--';
+      }
     }, 1000);
 
     console.log(

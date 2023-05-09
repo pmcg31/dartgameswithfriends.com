@@ -8,7 +8,7 @@ export default function Dashboard() {
   const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
 
-  let content: JSX.Element = null;
+  let content: JSX.Element | null = null;
   if (isLoaded) {
     if (isSignedIn) {
       content = (
@@ -84,5 +84,6 @@ export default function Dashboard() {
       );
     }
   }
+
   return <Layout title='Dashboard'>{content}</Layout>;
 }

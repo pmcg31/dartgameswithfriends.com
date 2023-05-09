@@ -11,10 +11,12 @@ import {
   ButtonGroup,
   HStack,
   useRadio,
-  useRadioGroup
+  useRadioGroup,
+  UseRadioProps
 } from '@chakra-ui/react';
+import { PropsWithChildren } from 'react';
 
-function RadioButton(props) {
+function RadioButton(props: PropsWithChildren<UseRadioProps & { sx: object }>) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
 
   const input = getInputProps();
