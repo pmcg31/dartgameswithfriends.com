@@ -5,7 +5,7 @@ import {
   deletePlayer,
   getPlayer,
   updatePlayer
-} from '@/lib/db-helper';
+} from '@/src/lib/db-helper';
 
 type Error = {
   error: string;

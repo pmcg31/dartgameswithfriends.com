@@ -4,7 +4,7 @@ import {
   DartHitKind,
   multiplierToDisplayString,
   scoreAreaToString
-} from '@/lib/dart-types';
+} from '@/src/lib/dart-types';
 import { Flex } from '@chakra-ui/react';
 
 export type DartHitDisplayProps = {

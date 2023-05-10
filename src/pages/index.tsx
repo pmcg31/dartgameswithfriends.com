@@ -1,4 +1,4 @@
-import Layout from '@/components/ui/layout/layout';
+import Layout from '@/src/components/ui/layout/layout';
 import { Box, Flex, Heading } from '@chakra-ui/react';
 import Image from 'next/image';
 

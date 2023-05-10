@@ -1,12 +1,12 @@
 import TurnController, {
   PlayerChangeEvent,
   TurnControllerPlayer
-} from '@/components/input/turn-controller';
+} from '@/src/components/input/turn-controller';
 import {
   DartHitEvent,
   dartHitEventToPoints,
   dartHitEventToString
-} from '@/lib/dart-types';
+} from '@/src/lib/dart-types';
 import {
   Flex,
   Grid,

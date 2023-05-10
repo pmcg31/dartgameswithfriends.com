@@ -1,9 +1,9 @@
-import DartHitInput from '@/components/input/dart-hit-input';
+import DartHitInput from '@/src/components/input/dart-hit-input';
 import {
   DartHitEvent,
   dartHitEventToPoints,
   dartHitEventToString
-} from '@/lib/dart-types';
+} from '@/src/lib/dart-types';
 import { useRef } from 'react';
 
 let timeoutID: NodeJS.Timeout | undefined = undefined;

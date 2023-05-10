@@ -1,4 +1,4 @@
-import Layout from '@/components/ui/layout/layout';
+import Layout from '@/src/components/ui/layout/layout';
 import { Flex } from '@chakra-ui/react';
 import { UserProfile } from '@clerk/nextjs';
 

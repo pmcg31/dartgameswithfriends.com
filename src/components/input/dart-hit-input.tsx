@@ -4,7 +4,7 @@ import {
   DartHitMultiplier,
   multiplierFromString,
   scoreAreaFromString
-} from '@/lib/dart-types';
+} from '@/src/lib/dart-types';
 import {
   Box,
   Button,

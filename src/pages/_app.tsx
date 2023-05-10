@@ -1,9 +1,10 @@
-import type { AppProps } from 'next/app';
+import type { AppProps, AppType } from 'next/app';
 import '@/styles/globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ChakraProvider } from '@chakra-ui/react';
+import { trpc } from '../utils/trpc';
 
-export default function App({ Component, pageProps }: AppProps) {
+const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
     <ClerkProvider {...pageProps}>
       <ChakraProvider>
@@ -11,4 +12,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </ChakraProvider>
     </ClerkProvider>
   );
-}
+};
+
+export default trpc.withTRPC(App);

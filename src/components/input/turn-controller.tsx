@@ -1,4 +1,4 @@
-import { DartHitEvent } from '@/lib/dart-types';
+import { DartHitEvent } from '@/src/lib/dart-types';
 import { Box, Flex, Grid, IconButton, Icon } from '@chakra-ui/react';
 import { ImUndo2 } from 'react-icons/im';
 import { GiDart } from 'react-icons/gi';
