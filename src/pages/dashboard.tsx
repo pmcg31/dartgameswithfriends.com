@@ -3,7 +3,6 @@ import Layout from '@/src/components/ui/layout/layout';
 import { Flex, Heading, Avatar, Button, Grid } from '@chakra-ui/react';
 import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { useRouter } from 'next/router';
-import { trpc } from '@/src/utils/trpc';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -12,7 +11,6 @@ export default function Dashboard() {
   let content: JSX.Element | null = null;
   if (isLoaded) {
     if (isSignedIn) {
-      const player = trpc.getPlayer.useQuery({ id: user.id });
       content = (
         <Flex
           width={'100dvw'}
@@ -72,20 +70,6 @@ export default function Dashboard() {
               <Button mt={'0.5rem'} colorScheme={'blackAlpha'} isDisabled>
                 View All
               </Button>
-            </DashCard>
-            <DashCard title={'User Info from tRPC'}>
-              <p>
-                <span style={{ opacity: '30%' }}>User id: </span>
-                {player.data ? player.data.id : '??'}
-              </p>
-              <p>
-                <span style={{ opacity: '30%' }}>Handle: </span>
-                {player.data ? player.data.handle : '??'}
-              </p>
-              <p>
-                <span style={{ opacity: '30%' }}>Created: </span>
-                {player.data ? (player.data.createdAt as string) : '??'}
-              </p>
             </DashCard>
           </Grid>
         </Flex>

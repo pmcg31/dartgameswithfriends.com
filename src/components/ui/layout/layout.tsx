@@ -26,6 +26,7 @@ import LayoutFooter from './layout-footer';
 import LayoutHeader from './layout-header';
 import { useUser } from '@clerk/nextjs';
 import { PropsWithChildren, useEffect } from 'react';
+import { trpc } from '@/src/utils/trpc';
 
 export default function Layout({
   title,
@@ -38,105 +39,60 @@ export default function Layout({
   // Use clerk user
   const { isLoaded, isSignedIn, user } = useUser();
 
-  // Synchronize the player for the signed in user
+  // Get player query
+  const player = trpc.getPlayer.useQuery(
+    { id: user?.id ?? '' },
+    {
+      enabled: isLoaded && isSignedIn
+    }
+  );
+
+  // Create player mutation
+  const createPlayerMutation = trpc.createPlayer.useMutation();
+
+  // Update player mutation
+  const updatePlayerMutation = trpc.updatePlayer.useMutation();
+
+  // Synchronize the player for the signed-in user
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      // Create an abort controller to
-      // cancel fetch on unmount/rerender
-      const controller = new AbortController();
-      const signal = controller.signal;
-
-      // Attempt to get the player for the
-      // signed in user
-      fetch(`/api/player/${user.id}`, { signal })
-        .then((res) => {
-          // Fetch successful, player found?
-          if (res.status === 404) {
-            // No, create
-            const body = JSON.stringify({ handle: user.username });
-            fetch(`/api/player/${user.id}`, {
-              signal,
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body
-            })
-              .then((res) => {
-                // Create failed
-                if (!res.ok) {
-                  res.json().then((data) => {
-                    console.log(
-                      `POST /api/player/${
-                        user.id
-                      } body: ${body} failed: ${JSON.stringify(data)}`
-                    );
-                  });
-                }
-              })
-              .catch((err) => {
-                if (err.name !== 'AbortError') {
-                  // Create failed
-                  console.log(
-                    `POST /api/player/${
-                      user.id
-                    } body: ${body} failed: ${JSON.stringify(err)}`
-                  );
-                }
-              });
-          } else if (res.status === 200) {
-            // Yes, has the username (handle) changed?
-            res.json().then((data) => {
-              if (user.username !== data.handle) {
-                // Yes, update
-                const body = JSON.stringify({ handle: user.username });
-                fetch(`/api/player/${user.id}`, {
-                  signal,
-                  method: 'PATCH',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body
-                })
-                  .then((res) => {
-                    if (!res.ok) {
-                      // Update failed
-                      res.json().then((data) => {
-                        console.log(
-                          `PATCH /api/player/${
-                            user.id
-                          } body: ${body} failed: ${JSON.stringify(data)}`
-                        );
-                      });
-                    }
-                  })
-                  .catch((err) => {
-                    if (err.name !== 'AbortError') {
-                      // Update failed
-                      console.log(
-                        `PATCH /api/player/${
-                          user.id
-                        } body: ${body} failed: ${JSON.stringify(err)}`
-                      );
-                    }
-                  });
+      if (player.isSuccess) {
+        if (player.data === null) {
+          // Player not found, create a new player
+          createPlayerMutation.mutate(
+            { id: user.id, handle: user.username || '' },
+            {
+              onError: (error) => {
+                console.log(`Create player error: ${JSON.stringify(error)}`);
               }
-            });
+              // onSuccess: (data) => {
+              //   console.log(
+              //     `Create player success: data: ${JSON.stringify(data)}`
+              //   );
+              // }
+            }
+          );
+        } else {
+          // Player found, check if the handle has changed
+          if (user.username !== player.data.handle) {
+            updatePlayerMutation.mutate(
+              { id: user.id, handle: user.username || '' },
+              {
+                onError: (error) => {
+                  console.log(`Update player error: ${JSON.stringify(error)}`);
+                }
+                // onSuccess: (data) => {
+                //   console.log(
+                //     `Update player success: data: ${JSON.stringify(data)}`
+                //   );
+                // }
+              }
+            );
           }
-        })
-        .catch((err) => {
-          if (err.name !== 'AbortError') {
-            // Initial GET failed
-            console.log(`GET /api/player/${user.id} failed: ${err}`);
-          }
-        });
-
-      return () => {
-        // Cancel the request before component unmounts
-        controller.abort();
-      };
+        }
+      }
     }
-  }, [isLoaded, isSignedIn, user]);
+  }, [isLoaded, isSignedIn, user, player.isSuccess]);
 
   // Set up page title
   let pageTitle = 'Dart Games With Friends';

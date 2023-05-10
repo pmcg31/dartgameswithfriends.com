@@ -22,6 +22,7 @@ function getBaseUrl() {
 export const trpc = createTRPCNext<AppRouter>({
   config(/* opts */) {
     return {
+      abortOnUnmount: true,
       links: [
         httpBatchLink({
           /**
