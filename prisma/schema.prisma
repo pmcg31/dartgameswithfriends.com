@@ -11,14 +11,48 @@ datasource db {
 }
 
 model Player {
-  id        String           @id
-  handle    String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @default(now())
-  adminOf   GroupAdmin[]
-  ownerOf   GameRoom[]       @relation("GameRoomOwner")
-  groups    GroupMember[]
-  gameRooms GameRoomPlayer[]
+  id               String              @id
+  handle           String
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @default(now())
+  notifications    Notification[]
+  aSideFriends     Friendship[]        @relation("aSideFriendship")
+  bSideFriends     Friendship[]        @relation("bSideFriendship")
+  obFriendRequests FriendshipRequest[] @relation("friendshipRequester")
+  ibFriendRequests FriendshipRequest[] @relation("friendshipAddressee")
+  adminOf          GroupAdmin[]
+  ownerOf          GameRoom[]          @relation("GameRoomOwner")
+  groups           GroupMember[]
+  gameRooms        GameRoomPlayer[]
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  player    Player   @relation(fields: [playerId], references: [id])
+  playerId  String
+  isNew     Boolean
+  text      String   @db.Text
+}
+
+model FriendshipRequest {
+  requester   Player   @relation("friendshipRequester", fields: [requesterId], references: [id])
+  requesterId String
+  addressee   Player   @relation("friendshipAddressee", fields: [addresseeId], references: [id])
+  addresseeId String
+  createdAt   DateTime @default(now())
+
+  @@id([requesterId, addresseeId])
+}
+
+model Friendship {
+  playerA   Player   @relation("aSideFriendship", fields: [playerAId], references: [id])
+  playerAId String
+  playerB   Player   @relation("bSideFriendship", fields: [playerBId], references: [id])
+  playerBId String
+  createdAt DateTime @default(now())
+
+  @@id([playerAId, playerBId])
 }
 
 model Group {

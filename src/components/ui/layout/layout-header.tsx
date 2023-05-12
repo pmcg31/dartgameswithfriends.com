@@ -2,6 +2,7 @@ import { AspectRatio, Flex } from '@chakra-ui/react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import DGWFLogo from '../brand/DGWFLogo';
+import NotificationButton from '../notification/notification-button';
 
 export default function LayoutHeader({
   hideSignIn
@@ -32,21 +33,24 @@ export default function LayoutHeader({
           </Link>
         </SignedIn>
       </Flex>
-      {!(hideSignIn != undefined && hideSignIn) && (
-        <>
-          <SignedIn>
-            <UserButton
-              showName
-              userProfileMode={'navigation'}
-              userProfileUrl={'/user-profile'}
-              afterSignOutUrl={'/'}
-            />
-          </SignedIn>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-        </>
-      )}
+      <Flex direction={'row'} alignItems={'center'} gap={'1rem'}>
+        <NotificationButton />
+        {!(hideSignIn != undefined && hideSignIn) && (
+          <>
+            <SignedIn>
+              <UserButton
+                showName
+                userProfileMode={'navigation'}
+                userProfileUrl={'/user-profile'}
+                afterSignOutUrl={'/'}
+              />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+          </>
+        )}
+      </Flex>
     </Flex>
   );
 }

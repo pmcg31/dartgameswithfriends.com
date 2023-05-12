@@ -25,3 +25,9 @@ export async function updatePlayer(
 export async function deletePlayer(id: string): Promise<Player> {
   return prisma.player.delete({ where: { id } });
 }
+
+export async function getNewNotificationCount(
+  playerId: string
+): Promise<number> {
+  return prisma.notification.count({ where: { playerId, isNew: true } });
+}

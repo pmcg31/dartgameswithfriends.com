@@ -2,7 +2,8 @@ import {
   getPlayer,
   createPlayer,
   updatePlayer,
-  deletePlayer
+  deletePlayer,
+  getNewNotificationCount
 } from '@/src/lib/db-helper';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
@@ -19,7 +20,10 @@ export const appRouter = router({
     .mutation((opts) => updatePlayer(opts.input.id, opts.input.handle)),
   deletePlayer: procedure
     .input(z.object({ id: z.string() }))
-    .mutation((opts) => deletePlayer(opts.input.id))
+    .mutation((opts) => deletePlayer(opts.input.id)),
+  getNewNotificationCount: procedure
+    .input(z.object({ playerId: z.string() }))
+    .query((opts) => getNewNotificationCount(opts.input.playerId))
 });
 
 // export type definition of API
