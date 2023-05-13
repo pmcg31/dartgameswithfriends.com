@@ -48,17 +48,20 @@ export default function FriendRequestNotification({
           <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
             <Button
               colorScheme={'blackAlpha'}
-              leftIcon={<BsFillPersonCheckFill />}
+              leftIcon={<BsFillPersonCheckFill color={'#0f0'} />}
             >
               Accept
             </Button>
             <Button
               colorScheme={'blackAlpha'}
-              leftIcon={<BsFillPersonDashFill />}
+              leftIcon={<BsFillPersonDashFill color={'#f00'} />}
             >
               Reject
             </Button>
-            <Button colorScheme={'blackAlpha'} leftIcon={<FaHandPaper />}>
+            <Button
+              colorScheme={'blackAlpha'}
+              leftIcon={<FaHandPaper color={'#f00'} />}
+            >
               Block
             </Button>
           </Flex>
