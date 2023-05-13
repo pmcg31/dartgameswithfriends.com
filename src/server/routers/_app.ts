@@ -3,7 +3,11 @@ import {
   createPlayer,
   updatePlayer,
   deletePlayer,
-  getNewNotificationCount
+  getNewNotificationCount,
+  getNotifications,
+  getNotificationCount,
+  deleteNotification,
+  notificationUpdateNew
 } from '@/src/lib/db-helper';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
@@ -23,7 +27,26 @@ export const appRouter = router({
     .mutation((opts) => deletePlayer(opts.input.id)),
   getNewNotificationCount: procedure
     .input(z.object({ playerId: z.string() }))
-    .query((opts) => getNewNotificationCount(opts.input.playerId))
+    .query((opts) => getNewNotificationCount(opts.input.playerId)),
+  getNotificationCount: procedure
+    .input(z.object({ playerId: z.string() }))
+    .query((opts) => getNotificationCount(opts.input.playerId)),
+  getNotifications: procedure
+    .input(
+      z.object({
+        playerId: z.string(),
+        limit: z.number().optional()
+      })
+    )
+    .query((opts) => getNotifications(opts.input.playerId, opts.input.limit)),
+  deleteNotification: procedure
+    .input(z.object({ notificationId: z.number() }))
+    .mutation((opts) => deleteNotification(opts.input.notificationId)),
+  notificationUpdateNew: procedure
+    .input(z.object({ notificationId: z.number(), isNew: z.boolean() }))
+    .mutation((opts) =>
+      notificationUpdateNew(opts.input.notificationId, opts.input.isNew)
+    )
 });
 
 // export type definition of API

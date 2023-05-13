@@ -40,6 +40,29 @@ export type DartHitEvent = {
   scoreArea?: DartHitScoreArea;
 };
 
+export type SystemNotificationData = {
+  subject: string;
+  body: string;
+};
+
+export type LinkNotificationData = {
+  subject: string;
+  url: string;
+};
+
+export type FriendRequestNotificationData = {
+  from: string;
+  createdAt: Date;
+};
+
+export type Notification = {
+  kind: string;
+  data:
+    | SystemNotificationData
+    | LinkNotificationData
+    | FriendRequestNotificationData;
+};
+
 export function multiplierToString(multiplier: DartHitMultiplier): string {
   switch (multiplier) {
     case DartHitMultiplier.X3:

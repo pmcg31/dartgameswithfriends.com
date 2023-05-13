@@ -34,7 +34,9 @@ export default function LayoutHeader({
         </SignedIn>
       </Flex>
       <Flex direction={'row'} alignItems={'center'} gap={'1rem'}>
-        <NotificationButton />
+        <SignedIn>
+          <NotificationButton />
+        </SignedIn>
         {!(hideSignIn != undefined && hideSignIn) && (
           <>
             <SignedIn>

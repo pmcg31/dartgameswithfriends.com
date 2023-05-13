@@ -1,12 +1,12 @@
 import { Flex, Heading } from '@chakra-ui/react';
+import { PropsWithChildren } from 'react';
 
 export default function DashCard({
   title,
   children
-}: {
+}: PropsWithChildren<{
   title: string;
-  children: JSX.Element | JSX.Element[];
-}): JSX.Element {
+}>): JSX.Element {
   return (
     <Flex
       direction={'column'}
