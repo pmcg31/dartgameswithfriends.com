@@ -199,7 +199,7 @@ export default function NotificationButton() {
                   );
                   meatballContent.push({
                     key: `${key}Accept`,
-                    icon: <BsFillPersonCheckFill />,
+                    icon: <BsFillPersonCheckFill color={'#0f0'} />,
                     buttonText: 'Accept',
                     onClick: () => {
                       markRead(notification.id);
@@ -207,7 +207,7 @@ export default function NotificationButton() {
                   });
                   meatballContent.push({
                     key: `${key}Reject`,
-                    icon: <BsFillPersonDashFill />,
+                    icon: <BsFillPersonDashFill color={'#f00'} />,
                     buttonText: 'Reject',
                     onClick: () => {
                       markRead(notification.id);
@@ -215,7 +215,7 @@ export default function NotificationButton() {
                   });
                   meatballContent.push({
                     key: `${key}Block`,
-                    icon: <FaHandPaper />,
+                    icon: <FaHandPaper color={'#f00'} />,
                     buttonText: 'Block',
                     onClick: () => {
                       markRead(notification.id);
