@@ -22,6 +22,7 @@ import GenericCard from '../common/generic-card';
 
 export default function FullNotificationCard({
   title,
+  buttonData,
   id,
   notificationId,
   isNew,
@@ -29,6 +30,7 @@ export default function FullNotificationCard({
   children
 }: PropsWithChildren<{
   title: string;
+  buttonData?: { icon: JSX.Element; onClick: () => void; text: string }[];
   id?: string;
   notificationId: number;
   isNew: boolean;
@@ -85,6 +87,23 @@ export default function FullNotificationCard({
                   p={'0.5rem'}
                 >
                   <Flex direction={'column'} gap={'0.25rem'}>
+                    {buttonData &&
+                      buttonData.map((data) => {
+                        return (
+                          <Button
+                            key={data.text}
+                            leftIcon={data.icon}
+                            colorScheme={'blackAlpha'}
+                            size={'sm'}
+                            onClick={() => {
+                              data.onClick();
+                              onClose();
+                            }}
+                          >
+                            {data.text}
+                          </Button>
+                        );
+                      })}
                     <Button
                       leftIcon={
                         isNew ? (

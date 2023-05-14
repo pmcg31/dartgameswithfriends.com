@@ -42,6 +42,17 @@ export default function FriendRequestNotification({
       return (
         <FullNotificationCard
           id={id}
+          buttonData={[
+            {
+              icon: <FaHandPaper color={'#f00'} />,
+              onClick: () => {
+                console.log('block clicked');
+              },
+              text: getPlayerQ.isSuccess
+                ? `Block @${getPlayerQ.data?.handle}`
+                : 'Block'
+            }
+          ]}
           notificationId={notificationId}
           isNew={isNew || false}
           createdAt={createdAt}
@@ -65,13 +76,6 @@ export default function FriendRequestNotification({
               size={{ base: 'sm', sm: 'md' }}
             >
               Reject
-            </Button>
-            <Button
-              colorScheme={'blackAlpha'}
-              leftIcon={<FaHandPaper color={'#f00'} />}
-              size={{ base: 'sm', sm: 'md' }}
-            >
-              Block
             </Button>
           </Flex>
         </FullNotificationCard>
