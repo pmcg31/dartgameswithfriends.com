@@ -70,6 +70,22 @@ export default function NotificationButton() {
   // Get trpc utils
   const utils = trpc.useContext();
 
+  // Function that marks a notification read
+  function markRead(notificationId: number) {
+    notificationUpdateNewM.mutate(
+      {
+        notificationId,
+        isNew: false
+      },
+      {
+        onSuccess: () => {
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+        }
+      }
+    );
+  }
+
   // Assume no notifications for now
   let popoverContent = (
     <Flex justifyContent={'center'} p={'0.5rem'}>
@@ -123,21 +139,6 @@ export default function NotificationButton() {
                     ...trashIconStyle,
                     backgroundColor: altBackgroundColor
                   };
-                }
-
-                function markRead(notificationId: number) {
-                  notificationUpdateNewM.mutate(
-                    {
-                      notificationId,
-                      isNew: false
-                    },
-                    {
-                      onSuccess: () => {
-                        utils.getNotifications.invalidate();
-                        utils.getNewNotificationCount.invalidate();
-                      }
-                    }
-                  );
                 }
 
                 const { kind, data } = JSON.parse(notification.text);
@@ -228,29 +229,18 @@ export default function NotificationButton() {
                 }
 
                 return (
-                  <>
-                    <Flex
-                      key={`${key}C1`}
-                      sx={newIconStyle}
-                      height='100%'
-                      alignItems={'center'}
-                    >
+                  <React.Fragment key={key}>
+                    <Flex sx={newIconStyle} height='100%' alignItems={'center'}>
                       {notification.isNew && (
                         <IconContext.Provider value={{ size: '0.4rem' }}>
                           <BsFillCircleFill color={'#0cf'} />
                         </IconContext.Provider>
                       )}
                     </Flex>
-                    <Flex
-                      key={`${key}C2`}
-                      sx={textStyle}
-                      height='100%'
-                      alignItems={'center'}
-                    >
+                    <Flex sx={textStyle} height='100%' alignItems={'center'}>
                       {notificationContent}
                     </Flex>
                     <Flex
-                      key={`${key}C3`}
                       sx={trashIconStyle}
                       height='100%'
                       alignItems={'center'}
@@ -351,7 +341,7 @@ export default function NotificationButton() {
                         )}
                       </Popover>
                     </Flex>
-                  </>
+                  </React.Fragment>
                 );
               })}
             </Grid>
