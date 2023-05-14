@@ -126,7 +126,7 @@ export default function NotificationButton() {
                   paddingRight: rowPaddingInline,
                   paddingBlock: rowPaddingBlock
                 };
-                if (idx % 2 === 0) {
+                if (idx % 2 !== 0) {
                   newIconStyle = {
                     ...newIconStyle,
                     backgroundColor: altBackgroundColor
