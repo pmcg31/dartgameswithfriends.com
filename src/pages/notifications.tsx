@@ -40,6 +40,7 @@ export default function Notifications() {
                     key={key}
                     notificationId={notification.id}
                     isNew={notification.isNew}
+                    createdAt={new Date(notification.createdAt)}
                     data={data}
                   />
                 );
@@ -51,6 +52,7 @@ export default function Notifications() {
                     key={key}
                     notificationId={notification.id}
                     isNew={notification.isNew}
+                    createdAt={new Date(notification.createdAt)}
                     data={data}
                   />
                 );
@@ -62,6 +64,7 @@ export default function Notifications() {
                     key={key}
                     notificationId={notification.id}
                     isNew={notification.isNew}
+                    createdAt={new Date(notification.createdAt)}
                     data={data}
                   />
                 );

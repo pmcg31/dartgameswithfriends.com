@@ -14,7 +14,7 @@ import { useUser } from '@clerk/nextjs';
 import { trpc } from '@/src/utils/trpc';
 import {
   BsBell,
-  BsStarFill,
+  BsFillCircleFill,
   BsFillTrash3Fill,
   BsThreeDots,
   BsFillEnvelopeCheckFill,
@@ -153,6 +153,7 @@ export default function NotificationButton() {
                       variant={'popover'}
                       notificationId={notification.id}
                       isNew={notification.isNew}
+                      createdAt={new Date(notification.createdAt)}
                       data={data}
                     />
                   );
@@ -174,6 +175,7 @@ export default function NotificationButton() {
                       variant={'popover'}
                       notificationId={notification.id}
                       isNew={notification.isNew}
+                      createdAt={new Date(notification.createdAt)}
                       data={data}
                     />
                   );
@@ -194,6 +196,7 @@ export default function NotificationButton() {
                       variant={'popover'}
                       notificationId={notification.id}
                       isNew={notification.isNew}
+                      createdAt={new Date(notification.createdAt)}
                       data={data}
                     />
                   );
@@ -233,9 +236,9 @@ export default function NotificationButton() {
                     >
                       {notification.isNew && (
                         <IconContext.Provider
-                          value={{ className: 'shared-class', size: '0.8rem' }}
+                          value={{ className: 'shared-class', size: '0.4rem' }}
                         >
-                          <BsStarFill color={'red'} />
+                          <BsFillCircleFill color={'#0cf'} />
                         </IconContext.Provider>
                       )}
                     </Flex>

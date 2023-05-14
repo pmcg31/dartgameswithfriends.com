@@ -5,17 +5,19 @@ import {
   Heading,
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
+  Text
 } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { IconContext } from 'react-icons';
 import {
-  BsStarFill,
+  BsFillCircleFill,
   BsFillTrash3Fill,
   BsThreeDots,
   BsFillEnvelopeCheckFill,
   BsFillEnvelopeDashFill
 } from 'react-icons/bs';
+import formatRelative from 'date-fns/formatRelative';
 
 export default function FullNotificationCard({
   title,
@@ -23,13 +25,15 @@ export default function FullNotificationCard({
   key,
   notificationId,
   isNew,
+  createdAt,
   children
 }: PropsWithChildren<{
   title: string;
   id?: string;
+  key?: string;
   notificationId: number;
   isNew: boolean;
-  key?: string;
+  createdAt: Date;
 }>) {
   // Get mutation for deleting a notification
   const deleteNotificationM = trpc.deleteNotification.useMutation();
@@ -57,14 +61,19 @@ export default function FullNotificationCard({
         p={'0.5rem 1rem'}
         direction={'row'}
       >
-        <IconContext.Provider
-          value={{ className: 'shared-class', size: '0.8rem' }}
-        >
-          <BsStarFill color={'red'} opacity={isNew ? '100%' : '0%'} />
-        </IconContext.Provider>
-        <Heading size={'md'} textAlign={'center'}>
-          {title}
-        </Heading>
+        <Flex alignItems={'center'} gap={'0.5em'}>
+          <IconContext.Provider
+            value={{ className: 'shared-class', size: '0.5em' }}
+          >
+            <BsFillCircleFill color={'#0cf'} opacity={isNew ? '100%' : '0%'} />
+          </IconContext.Provider>
+          <Flex direction={'column'}>
+            <Heading size={{ base: 'sm', sm: 'md' }}>{title}</Heading>
+            <Text fontSize={{ base: 'xs', sm: 'sm' }} opacity={'40%'}>
+              {formatRelative(createdAt, new Date())}
+            </Text>
+          </Flex>
+        </Flex>
         <Popover>
           {({ onClose }) => (
             <>
