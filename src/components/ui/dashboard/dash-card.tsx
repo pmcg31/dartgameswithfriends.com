@@ -1,37 +1,24 @@
-import { Flex, Heading } from '@chakra-ui/react';
+import { Heading } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
+import GenericCard from '../common/generic-card';
 
 export default function DashCard({
+  id,
+  key,
   title,
   children
 }: PropsWithChildren<{
+  id?: string;
+  key?: string;
   title: string;
 }>): JSX.Element {
   return (
-    <Flex
-      direction={'column'}
-      borderRadius={'1rem'}
-      backgroundColor={'rgba(0,0,0,0.3)'}
-      overflow={'hidden'}
+    <GenericCard
+      id={id}
+      key={key}
+      header={<Heading size={'md'}>{title}</Heading>}
     >
-      <Flex
-        backgroundColor={'rgba(0,0,0,0.3)'}
-        alignItems={'center'}
-        justifyItems={'center'}
-        p={'0.5rem'}
-        direction={'column'}
-      >
-        <Heading size={'md'}>{title}</Heading>
-      </Flex>
-      <Flex
-        flexGrow={1}
-        alignItems={'center'}
-        justifyItems={'center'}
-        p={'0.5rem'}
-        direction={'column'}
-      >
-        {children}
-      </Flex>
-    </Flex>
+      {children}
+    </GenericCard>
   );
 }
