@@ -14,6 +14,7 @@ import { useUser } from '@clerk/nextjs';
 import { trpc } from '@/src/utils/trpc';
 import {
   BsBell,
+  BsBellFill,
   BsFillCircleFill,
   BsFillTrash3Fill,
   BsThreeDots,
@@ -403,45 +404,60 @@ export default function NotificationButton() {
     //   }
     // }}
     >
-      <PopoverTrigger>
-        <Grid gridArea={'cell'} isolation={'isolate'}>
-          <IconContext.Provider
-            value={{ className: 'shared-class', size: '1.75rem' }}
+      {({ isOpen }) => (
+        <>
+          <PopoverTrigger>
+            <Grid gridArea={'cell'} isolation={'isolate'}>
+              <IconContext.Provider
+                value={{ className: 'shared-class', size: '1.75rem' }}
+              >
+                {isOpen ? (
+                  <BsBellFill
+                    style={{
+                      gridArea: 'cell',
+                      zIndex: -1,
+                      alignSelf: 'center',
+                      justifySelf: 'center'
+                    }}
+                  />
+                ) : (
+                  <BsBell
+                    style={{
+                      gridArea: 'cell',
+                      zIndex: -1,
+                      alignSelf: 'center',
+                      justifySelf: 'center'
+                    }}
+                  />
+                )}
+              </IconContext.Provider>
+              {newNotifyCountQ.isSuccess && newNotifyCountQ.data > 0 && (
+                <Box
+                  gridArea={'cell'}
+                  alignSelf={'start'}
+                  justifySelf={'end'}
+                  backgroundColor={'red'}
+                  color={'#fff'}
+                  height={'1.5em'}
+                  borderRadius={'0.75em'}
+                  fontSize={'x-small'}
+                  padding={'0 0.5em'}
+                  mt={'-0.25rem'}
+                  mr={'-0.25rem'}
+                >
+                  {newNotifyCountQ.data}
+                </Box>
+              )}
+            </Grid>
+          </PopoverTrigger>
+          <PopoverContent
+            backgroundColor={'var(--brand-color)'}
+            border={'2px solid #888'}
           >
-            <BsBell
-              style={{
-                gridArea: 'cell',
-                zIndex: -1,
-                alignSelf: 'center',
-                justifySelf: 'center'
-              }}
-            />
-          </IconContext.Provider>
-          {newNotifyCountQ.isSuccess && newNotifyCountQ.data > 0 && (
-            <Box
-              gridArea={'cell'}
-              alignSelf={'start'}
-              justifySelf={'end'}
-              backgroundColor={'red'}
-              color={'#fff'}
-              height={'1.5em'}
-              borderRadius={'0.75em'}
-              fontSize={'x-small'}
-              padding={'0 0.5em'}
-              mt={'-0.25rem'}
-              mr={'-0.25rem'}
-            >
-              {newNotifyCountQ.data}
-            </Box>
-          )}
-        </Grid>
-      </PopoverTrigger>
-      <PopoverContent
-        backgroundColor={'var(--brand-color)'}
-        border={'2px solid #888'}
-      >
-        {popoverContent}
-      </PopoverContent>
+            {popoverContent}
+          </PopoverContent>
+        </>
+      )}
     </Popover>
   );
 }
