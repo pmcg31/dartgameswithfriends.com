@@ -17,11 +17,11 @@ export default function GenericCard({
       key={key}
       direction={'column'}
       borderRadius={'0.4rem'}
-      backgroundColor={'rgba(0,0,0,0.3)'}
+      backgroundColor={'rgba(0,0,0,0.2)'}
       overflow={'hidden'}
     >
       <Flex
-        backgroundColor={'rgba(0,0,0,0.2)'}
+        backgroundColor={'rgba(0,0,0,0.25)'}
         alignItems={'center'}
         justifyItems={'center'}
         p={'0.5rem'}
