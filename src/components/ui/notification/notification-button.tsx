@@ -106,6 +106,9 @@ export default function NotificationButton() {
           <PopoverBody>
             <Grid templateColumns={'auto 1fr auto'}>
               {notificationsQ.data.map((notification, idx) => {
+                // Iterate notifications and create a card
+                // for each one. Start by computing styles
+                // for this row
                 const key = `${notification.id}`;
                 const rowPaddingInline = '0.5rem';
                 const rowPaddingBlock = '0.25rem';
@@ -141,15 +144,23 @@ export default function NotificationButton() {
                   };
                 }
 
+                // Parse JSON in notification text and
+                // pull out its kind and the data for
+                // this notification
                 const { kind, data } = JSON.parse(notification.text);
+
+                // Generate notification content and
+                // popover menu data based on the
+                // kind of notification this is
                 let notificationContent: JSX.Element | null = null;
-                const meatballContent: {
+                const meatballData: {
                   key: string;
                   icon: JSX.Element;
                   buttonText: string;
                   onClick: () => void;
                 }[] = [];
                 if (kind === 'sysNotify') {
+                  // System notification
                   notificationContent = (
                     <SystemNotification
                       variant={'popover'}
@@ -159,7 +170,7 @@ export default function NotificationButton() {
                       data={data}
                     />
                   );
-                  meatballContent.push({
+                  meatballData.push({
                     key: `${key}View`,
                     icon: <BsBinocularsFill />,
                     buttonText: 'View...',
@@ -172,6 +183,7 @@ export default function NotificationButton() {
                     }
                   });
                 } else if (kind === 'linkNotify') {
+                  // Link notification
                   notificationContent = (
                     <LinkNotification
                       variant={'popover'}
@@ -181,7 +193,7 @@ export default function NotificationButton() {
                       data={data}
                     />
                   );
-                  meatballContent.push({
+                  meatballData.push({
                     key: `${key}LearnMore`,
                     icon: <BsArrowUpRightSquareFill />,
                     buttonText: 'Learn more...',
@@ -193,6 +205,7 @@ export default function NotificationButton() {
                     }
                   });
                 } else if (kind === 'frNotify') {
+                  // Friend request notification
                   notificationContent = (
                     <FriendRequestNotification
                       variant={'popover'}
@@ -202,7 +215,7 @@ export default function NotificationButton() {
                       data={data}
                     />
                   );
-                  meatballContent.push({
+                  meatballData.push({
                     key: `${key}Accept`,
                     icon: <BsFillPersonCheckFill color={'#0f0'} />,
                     buttonText: 'Accept',
@@ -210,7 +223,7 @@ export default function NotificationButton() {
                       markRead(notification.id);
                     }
                   });
-                  meatballContent.push({
+                  meatballData.push({
                     key: `${key}Reject`,
                     icon: <BsFillPersonDashFill color={'#f00'} />,
                     buttonText: 'Reject',
@@ -218,7 +231,7 @@ export default function NotificationButton() {
                       markRead(notification.id);
                     }
                   });
-                  meatballContent.push({
+                  meatballData.push({
                     key: `${key}Block`,
                     icon: <FaHandPaper color={'#f00'} />,
                     buttonText: 'Block',
@@ -267,7 +280,7 @@ export default function NotificationButton() {
                               p={'0.5rem'}
                             >
                               <Flex direction={'column'} gap={'0.25rem'}>
-                                {meatballContent.map((value) => {
+                                {meatballData.map((value) => {
                                   return (
                                     <Button
                                       key={value.key}
