@@ -236,9 +236,7 @@ export default function NotificationButton() {
                       alignItems={'center'}
                     >
                       {notification.isNew && (
-                        <IconContext.Provider
-                          value={{ className: 'shared-class', size: '0.4rem' }}
-                        >
+                        <IconContext.Provider value={{ size: '0.4rem' }}>
                           <BsFillCircleFill color={'#0cf'} />
                         </IconContext.Provider>
                       )}
@@ -408,9 +406,7 @@ export default function NotificationButton() {
         <>
           <PopoverTrigger>
             <Grid gridArea={'cell'} isolation={'isolate'}>
-              <IconContext.Provider
-                value={{ className: 'shared-class', size: '1.75rem' }}
-              >
+              <IconContext.Provider value={{ size: '1.75rem' }}>
                 {isOpen ? (
                   <BsBellFill
                     style={{

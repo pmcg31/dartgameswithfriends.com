@@ -58,9 +58,7 @@ export default function FullNotificationCard({
           width={'100%'}
         >
           <Flex alignItems={'center'} gap={'0.5em'}>
-            <IconContext.Provider
-              value={{ className: 'shared-class', size: '0.5em' }}
-            >
+            <IconContext.Provider value={{ size: '0.5em' }}>
               <BsFillCircleFill
                 color={'#0cf'}
                 opacity={isNew ? '100%' : '0%'}
@@ -78,9 +76,7 @@ export default function FullNotificationCard({
               <>
                 <PopoverTrigger>
                   <Button colorScheme={'blackAlpha'} size='sm'>
-                    <IconContext.Provider
-                      value={{ className: 'shared-class', size: '0.8rem' }}
-                    >
+                    <IconContext.Provider value={{ size: '0.8rem' }}>
                       <BsThreeDots color={'#888'} />
                     </IconContext.Provider>
                   </Button>
@@ -171,7 +167,7 @@ export default function FullNotificationCard({
     //   >
     //     <Flex alignItems={'center'} gap={'0.5em'}>
     //       <IconContext.Provider
-    //         value={{ className: 'shared-class', size: '0.5em' }}
+    //         value={{ size: '0.5em' }}
     //       >
     //         <BsFillCircleFill color={'#0cf'} opacity={isNew ? '100%' : '0%'} />
     //       </IconContext.Provider>
@@ -188,7 +184,7 @@ export default function FullNotificationCard({
     //           <PopoverTrigger>
     //             <Button colorScheme={'blackAlpha'} size='sm'>
     //               <IconContext.Provider
-    //                 value={{ className: 'shared-class', size: '0.8rem' }}
+    //                 value={{ size: '0.8rem' }}
     //               >
     //                 <BsThreeDots color={'#888'} />
     //               </IconContext.Provider>
