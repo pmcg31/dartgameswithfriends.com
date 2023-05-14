@@ -23,66 +23,64 @@ export default function FriendRequestNotification({
 }): JSX.Element | null {
   const getPlayerQ = trpc.getPlayer.useQuery({ id: data.from });
 
-  if (getPlayerQ.isSuccess) {
-    if (variant === 'popover') {
-      return (
-        <Flex direction={'column'}>
-          <Text fontSize={'sm'}>
-            <span style={{ fontWeight: 700 }}>
-              @{getPlayerQ.data?.handle || 'unknown'}
-            </span>{' '}
-            wants to be friends
-          </Text>
-          <Text fontSize={'xs'} opacity={'50%'}>
-            {formatRelative(createdAt, new Date())}
-          </Text>
+  if (variant === 'popover') {
+    return (
+      <Flex direction={'column'}>
+        <Text fontSize={'sm'}>
+          <span style={{ fontWeight: 700 }}>
+            @{(getPlayerQ.isSuccess && getPlayerQ.data?.handle) || 'unknown'}
+          </span>{' '}
+          wants to be friends
+        </Text>
+        <Text fontSize={'xs'} opacity={'50%'}>
+          {formatRelative(createdAt, new Date())}
+        </Text>
+      </Flex>
+    );
+  } else if (variant === 'full') {
+    return (
+      <FullNotificationCard
+        id={id}
+        buttonData={
+          getPlayerQ.isSuccess
+            ? [
+                {
+                  icon: <FaHandPaper color={'#f00'} />,
+                  onClick: () => {
+                    console.log('block clicked');
+                  },
+                  text: `Block @${getPlayerQ.data?.handle}`
+                }
+              ]
+            : []
+        }
+        notificationId={notificationId}
+        isNew={isNew || false}
+        createdAt={createdAt}
+        title={
+          getPlayerQ.isSuccess
+            ? `Friend Request from @${getPlayerQ.data?.handle}`
+            : 'Friend Request'
+        }
+      >
+        <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
+          <Button
+            colorScheme={'blackAlpha'}
+            leftIcon={<BsFillPersonCheckFill color={'#0f0'} />}
+            size={{ base: 'sm', sm: 'md' }}
+          >
+            Accept
+          </Button>
+          <Button
+            colorScheme={'blackAlpha'}
+            leftIcon={<BsFillPersonDashFill color={'#f00'} />}
+            size={{ base: 'sm', sm: 'md' }}
+          >
+            Reject
+          </Button>
         </Flex>
-      );
-    } else if (variant === 'full') {
-      return (
-        <FullNotificationCard
-          id={id}
-          buttonData={[
-            {
-              icon: <FaHandPaper color={'#f00'} />,
-              onClick: () => {
-                console.log('block clicked');
-              },
-              text: getPlayerQ.isSuccess
-                ? `Block @${getPlayerQ.data?.handle}`
-                : 'Block'
-            }
-          ]}
-          notificationId={notificationId}
-          isNew={isNew || false}
-          createdAt={createdAt}
-          title={
-            getPlayerQ.isSuccess
-              ? `Friend Request from @${getPlayerQ.data?.handle}`
-              : 'Friend Request'
-          }
-        >
-          <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
-            <Button
-              colorScheme={'blackAlpha'}
-              leftIcon={<BsFillPersonCheckFill color={'#0f0'} />}
-              size={{ base: 'sm', sm: 'md' }}
-            >
-              Accept
-            </Button>
-            <Button
-              colorScheme={'blackAlpha'}
-              leftIcon={<BsFillPersonDashFill color={'#f00'} />}
-              size={{ base: 'sm', sm: 'md' }}
-            >
-              Reject
-            </Button>
-          </Flex>
-        </FullNotificationCard>
-      );
-    }
-  } else {
-    return <p>Friend request</p>;
+      </FullNotificationCard>
+    );
   }
 
   return null;
