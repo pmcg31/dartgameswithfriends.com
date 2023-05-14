@@ -7,7 +7,6 @@ import formatRelative from 'date-fns/formatRelative';
 export default function LinkNotification({
   variant,
   id,
-  key,
   notificationId,
   isNew,
   createdAt,
@@ -15,7 +14,6 @@ export default function LinkNotification({
 }: {
   variant: 'popover' | 'full';
   id?: string;
-  key?: string;
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
@@ -37,7 +35,6 @@ export default function LinkNotification({
       <FullNotificationCard
         title={data.subject}
         id={id}
-        key={key}
         notificationId={notificationId}
         isNew={isNew}
         createdAt={createdAt}

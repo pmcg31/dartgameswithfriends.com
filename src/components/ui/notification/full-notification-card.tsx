@@ -23,7 +23,6 @@ import GenericCard from '../common/generic-card';
 export default function FullNotificationCard({
   title,
   id,
-  key,
   notificationId,
   isNew,
   createdAt,
@@ -31,7 +30,6 @@ export default function FullNotificationCard({
 }: PropsWithChildren<{
   title: string;
   id?: string;
-  key?: string;
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
@@ -48,7 +46,6 @@ export default function FullNotificationCard({
   return (
     <GenericCard
       id={id}
-      key={key}
       header={
         <Flex
           alignItems={'center'}
@@ -89,7 +86,7 @@ export default function FullNotificationCard({
                 >
                   <Flex direction={'column'} gap={'0.25rem'}>
                     <Button
-                      key={`${key}ToggleRead`}
+                      key={`${notificationId}ToggleRead`}
                       leftIcon={
                         isNew ? (
                           <BsFillEnvelopeCheckFill />

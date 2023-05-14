@@ -9,7 +9,6 @@ import formatRelative from 'date-fns/formatRelative';
 export default function FriendRequestNotification({
   variant,
   id,
-  key,
   notificationId,
   isNew,
   createdAt,
@@ -17,7 +16,6 @@ export default function FriendRequestNotification({
 }: {
   variant: 'popover' | 'full';
   id?: string;
-  key?: string;
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
@@ -44,7 +42,6 @@ export default function FriendRequestNotification({
       return (
         <FullNotificationCard
           id={id}
-          key={key}
           notificationId={notificationId}
           isNew={isNew || false}
           createdAt={createdAt}

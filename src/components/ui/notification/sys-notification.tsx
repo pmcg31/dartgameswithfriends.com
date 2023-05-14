@@ -6,7 +6,6 @@ import formatRelative from 'date-fns/formatRelative';
 export default function SystemNotification({
   variant,
   id,
-  key,
   notificationId,
   isNew,
   createdAt,
@@ -14,7 +13,6 @@ export default function SystemNotification({
 }: {
   variant: 'popover' | 'full';
   id?: string;
-  key?: string;
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
@@ -36,7 +34,6 @@ export default function SystemNotification({
       <FullNotificationCard
         title={data.subject}
         id={id}
-        key={key}
         notificationId={notificationId}
         isNew={isNew}
         createdAt={createdAt}
