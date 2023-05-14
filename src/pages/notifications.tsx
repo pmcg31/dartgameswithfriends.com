@@ -1,5 +1,5 @@
 import Layout from '@/src/components/ui/layout/layout';
-import { Flex, Heading } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import FriendRequestNotification from '../components/ui/notification/friend-request-notification';
 import LinkNotification from '../components/ui/notification/link-notification';
@@ -28,7 +28,7 @@ export default function Notifications() {
           gap={'1rem'}
         >
           <Heading>Notifications</Heading>
-          {notificationsQ.isSuccess &&
+          {notificationsQ.isSuccess && notificationsQ.data.length > 0 ? (
             notificationsQ.data.map((notification) => {
               const key = `n${notification.id}`;
               const { kind, data } = JSON.parse(notification.text);
@@ -75,7 +75,12 @@ export default function Notifications() {
                   </p>
                 );
               }
-            })}
+            })
+          ) : (
+            <Text paddingInline={'0.5rem'}>
+              You don&apos;t have any notifications right now. Check back later!
+            </Text>
+          )}
         </Flex>
       );
     } else {
