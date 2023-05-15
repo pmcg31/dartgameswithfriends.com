@@ -36,7 +36,8 @@ export default function IncomingFriendRequests({
             icon: <FaHandPaper color={'#f00'} />,
             text: 'Block'
           }
-        ]
+        ],
+        buttonsAsPopover: true
       };
     });
   }

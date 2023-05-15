@@ -27,7 +27,8 @@ export default function OutgoingFriendRequests({
             icon: <BsPersonSlash color={'#f00'} />,
             text: 'Cancel'
           }
-        ]
+        ],
+        buttonsAsPopover: true
       };
     });
   }

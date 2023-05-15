@@ -38,7 +38,9 @@ export default function SystemNotification({
         isNew={isNew}
         createdAt={createdAt}
       >
-        <Text fontSize={{ base: 'sm', sm: 'md' }}>{data.body}</Text>
+        <Flex paddingInline={'1rem'}>
+          <Text fontSize={{ base: 'sm', sm: 'md' }}>{data.body}</Text>
+        </Flex>
       </FullNotificationCard>
     );
   }

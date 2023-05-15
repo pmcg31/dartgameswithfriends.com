@@ -30,7 +30,7 @@ export default function GenericCard({
         flexGrow={1}
         alignItems={'center'}
         justifyItems={'center'}
-        p={'0.5rem 1.5rem'}
+        p={'0.5rem 0.5rem'}
         direction={'column'}
       >
         {children}
