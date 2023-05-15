@@ -12,10 +12,10 @@ import { PropsWithChildren } from 'react';
 import { IconContext } from 'react-icons';
 import {
   BsFillCircleFill,
-  BsFillTrash3Fill,
+  BsTrash3,
   BsThreeDots,
-  BsFillEnvelopeCheckFill,
-  BsFillEnvelopeDashFill
+  BsEnvelopeCheck,
+  BsEnvelopeDash
 } from 'react-icons/bs';
 import formatRelative from 'date-fns/formatRelative';
 import GenericCard from '../common/generic-card';
@@ -106,11 +106,7 @@ export default function FullNotificationCard({
                       })}
                     <Button
                       leftIcon={
-                        isNew ? (
-                          <BsFillEnvelopeCheckFill />
-                        ) : (
-                          <BsFillEnvelopeDashFill />
-                        )
+                        isNew ? <BsEnvelopeCheck /> : <BsEnvelopeDash />
                       }
                       colorScheme={'blackAlpha'}
                       size={'sm'}
@@ -135,7 +131,7 @@ export default function FullNotificationCard({
                     <Button
                       colorScheme={'blackAlpha'}
                       size={'sm'}
-                      leftIcon={<BsFillTrash3Fill />}
+                      leftIcon={<BsTrash3 />}
                       onClick={() => {
                         deleteNotificationM.mutate(
                           {

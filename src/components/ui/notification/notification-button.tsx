@@ -16,16 +16,16 @@ import {
   BsBell,
   BsBellFill,
   BsFillCircleFill,
-  BsFillTrash3Fill,
+  BsTrash3,
   BsThreeDots,
-  BsFillEnvelopeCheckFill,
-  BsFillEnvelopeDashFill,
-  BsArrowUpRightSquareFill,
-  BsFillPersonCheckFill,
-  BsFillPersonDashFill,
-  BsBinocularsFill
+  BsEnvelopeCheck,
+  BsEnvelopeDash,
+  BsArrowUpRightSquare,
+  BsPersonCheck,
+  BsPersonDash,
+  BsBinoculars
 } from 'react-icons/bs';
-import { FaHandPaper } from 'react-icons/fa';
+import { FaRegHandPaper } from 'react-icons/fa';
 import { IconContext } from 'react-icons/lib';
 import React, { CSSProperties } from 'react';
 import LinkNotification from './link-notification';
@@ -172,7 +172,7 @@ export default function NotificationButton() {
                   );
                   meatballData.push({
                     key: `${key}View`,
-                    icon: <BsBinocularsFill />,
+                    icon: <BsBinoculars />,
                     buttonText: 'View...',
                     onClick: () => {
                       markRead(notification.id);
@@ -195,7 +195,7 @@ export default function NotificationButton() {
                   );
                   meatballData.push({
                     key: `${key}LearnMore`,
-                    icon: <BsArrowUpRightSquareFill />,
+                    icon: <BsArrowUpRightSquare />,
                     buttonText: 'Learn more...',
                     onClick: () => {
                       router.push({
@@ -217,7 +217,7 @@ export default function NotificationButton() {
                   );
                   meatballData.push({
                     key: `${key}Accept`,
-                    icon: <BsFillPersonCheckFill color={'#0f0'} />,
+                    icon: <BsPersonCheck color={'#0f0'} />,
                     buttonText: 'Accept',
                     onClick: () => {
                       markRead(notification.id);
@@ -225,7 +225,7 @@ export default function NotificationButton() {
                   });
                   meatballData.push({
                     key: `${key}Reject`,
-                    icon: <BsFillPersonDashFill color={'#f00'} />,
+                    icon: <BsPersonDash color={'#f00'} />,
                     buttonText: 'Reject',
                     onClick: () => {
                       markRead(notification.id);
@@ -233,7 +233,7 @@ export default function NotificationButton() {
                   });
                   meatballData.push({
                     key: `${key}Block`,
-                    icon: <FaHandPaper color={'#f00'} />,
+                    icon: <FaRegHandPaper color={'#f00'} />,
                     buttonText: 'Block',
                     onClick: () => {
                       markRead(notification.id);
@@ -300,9 +300,9 @@ export default function NotificationButton() {
                                   key={`${key}ToggleRead`}
                                   leftIcon={
                                     notification.isNew ? (
-                                      <BsFillEnvelopeCheckFill />
+                                      <BsEnvelopeCheck />
                                     ) : (
-                                      <BsFillEnvelopeDashFill />
+                                      <BsEnvelopeDash />
                                     )
                                   }
                                   colorScheme={'blackAlpha'}
@@ -327,7 +327,7 @@ export default function NotificationButton() {
                                 </Button>
                                 <Button
                                   key={`${key}Delete`}
-                                  leftIcon={<BsFillTrash3Fill />}
+                                  leftIcon={<BsTrash3 />}
                                   colorScheme={'blackAlpha'}
                                   size={'sm'}
                                   onClick={() => {

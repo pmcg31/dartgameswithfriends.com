@@ -2,8 +2,8 @@ import { FriendRequestNotificationData } from '@/src/lib/dart-types';
 import { trpc } from '@/src/utils/trpc';
 import { Button, Flex, Text } from '@chakra-ui/react';
 import FullNotificationCard from './full-notification-card';
-import { BsFillPersonCheckFill, BsFillPersonDashFill } from 'react-icons/bs';
-import { FaHandPaper } from 'react-icons/fa';
+import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
+import { FaRegHandPaper } from 'react-icons/fa';
 import formatRelative from 'date-fns/formatRelative';
 
 export default function FriendRequestNotification({
@@ -45,7 +45,7 @@ export default function FriendRequestNotification({
           getPlayerQ.isSuccess
             ? [
                 {
-                  icon: <FaHandPaper color={'#f00'} />,
+                  icon: <FaRegHandPaper color={'#f00'} />,
                   onClick: () => {
                     console.log('block clicked');
                   },
@@ -66,14 +66,14 @@ export default function FriendRequestNotification({
         <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
           <Button
             colorScheme={'blackAlpha'}
-            leftIcon={<BsFillPersonCheckFill color={'#0f0'} />}
+            leftIcon={<BsPersonCheck color={'#0f0'} />}
             size={{ base: 'sm', sm: 'md' }}
           >
             Accept
           </Button>
           <Button
             colorScheme={'blackAlpha'}
-            leftIcon={<BsFillPersonDashFill color={'#f00'} />}
+            leftIcon={<BsPersonDash color={'#f00'} />}
             size={{ base: 'sm', sm: 'md' }}
           >
             Reject

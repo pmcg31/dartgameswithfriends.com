@@ -1,5 +1,6 @@
 import { trpc } from '@/src/utils/trpc';
 import React from 'react';
+import { BsPersonX } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
 
 function formatFriendSince(when: Date) {
@@ -70,6 +71,9 @@ export default function FriendsList({
       }
 
       // Consume data from chosen side
+      const buttons = [
+        { icon: <BsPersonX color={'#f00'} />, text: 'Unfriend' }
+      ];
       if (isASide) {
         // Take from A side
         data.push({
@@ -77,7 +81,8 @@ export default function FriendsList({
           addedText: formatFriendSince(
             new Date(friendsListQ.data.aSideFriends[aIdx].createdAt)
           ),
-          buttons: []
+          buttons,
+          buttonsAsPopover: true
         });
         aIdx++;
       } else {
@@ -87,7 +92,8 @@ export default function FriendsList({
           addedText: formatFriendSince(
             new Date(friendsListQ.data.bSideFriends[bIdx].createdAt)
           ),
-          buttons: []
+          buttons,
+          buttonsAsPopover: true
         });
         bIdx++;
       }
