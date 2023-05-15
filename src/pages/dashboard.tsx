@@ -59,8 +59,14 @@ export default function Dashboard() {
             </DashCard>
             <DashCard title={'Friends'}>
               <p style={{ opacity: '30%' }}>{'You have no friends'}</p>
-              <Button mt={'0.5rem'} colorScheme={'blackAlpha'}>
-                Invite Friends
+              <Button
+                mt={'0.5rem'}
+                colorScheme={'blackAlpha'}
+                onClick={() => {
+                  router.push('/friends');
+                }}
+              >
+                Manage Friends
               </Button>
             </DashCard>
             <DashCard title={'Achievements'}>
