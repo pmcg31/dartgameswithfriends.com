@@ -1,8 +1,9 @@
 import DashCard from '@/src/components/ui/dashboard/dash-card';
 import Layout from '@/src/components/ui/layout/layout';
-import { Flex, Heading, Avatar, Button, Grid } from '@chakra-ui/react';
+import { Flex, Button, Grid } from '@chakra-ui/react';
 import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { useRouter } from 'next/router';
+import Player from '../components/ui/common/player';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -30,10 +31,7 @@ export default function Dashboard() {
             gap={'1rem'}
             wrap={'wrap'}
           >
-            <Flex gap={'1rem'}>
-              <Avatar src={user.profileImageUrl} />
-              <Heading>{user.username}</Heading>
-            </Flex>
+            <Player playerId={user.id} size={'lg'} />
             <Button
               colorScheme={'blackAlpha'}
               onClick={() => {

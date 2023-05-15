@@ -60,7 +60,14 @@ export default function Layout({
         if (player.data === null) {
           // Player not found, create a new player
           createPlayerMutation.mutate(
-            { id: user.id, handle: user.username || '' },
+            {
+              id: user.id,
+              handle: user.username || '',
+              email: user.primaryEmailAddress
+                ? user.primaryEmailAddress.emailAddress
+                : '',
+              profileImageUrl: user.profileImageUrl
+            },
             {
               onError: (error) => {
                 console.log(`Create player error: ${JSON.stringify(error)}`);
@@ -73,10 +80,34 @@ export default function Layout({
             }
           );
         } else {
-          // Player found, check if the handle has changed
-          if (user.username !== player.data.handle) {
+          // Player found, check if anything has changed
+          const updates: {
+            handle?: string;
+            email?: string;
+            profileImageUrl?: string;
+          } = {};
+          let hasUpdates = false;
+          if (user.username && user.username !== player.data.handle) {
+            updates.handle = user.username;
+            hasUpdates = true;
+          }
+          if (
+            user.primaryEmailAddress &&
+            user.primaryEmailAddress.emailAddress !== player.data.email
+          ) {
+            updates.email = user.primaryEmailAddress.emailAddress;
+            hasUpdates = true;
+          }
+          if (user.profileImageUrl !== player.data.profileImageUrl) {
+            updates.profileImageUrl = user.profileImageUrl;
+            hasUpdates = true;
+          }
+
+          if (hasUpdates) {
+            console.log(`Updating with ${JSON.stringify(updates)}`);
+            // Update player if anything changed
             updatePlayerMutation.mutate(
-              { id: user.id, handle: user.username || '' },
+              { id: user.id, ...updates },
               {
                 onError: (error) => {
                   console.log(`Update player error: ${JSON.stringify(error)}`);
@@ -92,6 +123,7 @@ export default function Layout({
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isSignedIn, user, player.isSuccess]);
 
   // Set up page title

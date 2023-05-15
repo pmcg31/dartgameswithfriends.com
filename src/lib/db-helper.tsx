@@ -1,4 +1,4 @@
-import { Player, Notification } from '@prisma/client';
+import { Player, Notification, FriendshipRequest } from '@prisma/client';
 import prisma from '@/src/lib/prisma';
 
 export async function getPlayer(id: string): Promise<Player | null> {
@@ -7,18 +7,22 @@ export async function getPlayer(id: string): Promise<Player | null> {
 
 export async function createPlayer(
   id: string,
-  handle: string
+  handle: string,
+  email: string,
+  profileImageUrl: string
 ): Promise<Player> {
-  return prisma.player.create({ data: { id, handle } });
+  return prisma.player.create({ data: { id, handle, email, profileImageUrl } });
 }
 
 export async function updatePlayer(
   id: string,
-  handle: string
+  handle?: string,
+  email?: string,
+  profileImageUrl?: string
 ): Promise<Player> {
   return prisma.player.update({
     where: { id },
-    data: { handle, updatedAt: new Date() }
+    data: { handle, email, profileImageUrl, updatedAt: new Date() }
   });
 }
 
@@ -64,5 +68,51 @@ export async function notificationUpdateNew(
   return prisma.notification.update({
     where: { id: notificationId },
     data: { isNew }
+  });
+}
+
+export async function getIncomingFriendRequests(
+  playerId: string
+): Promise<FriendshipRequest[]> {
+  return prisma.friendshipRequest.findMany({
+    where: { addresseeId: playerId }
+  });
+}
+
+export async function getOutgoingFriendRequests(
+  playerId: string
+): Promise<FriendshipRequest[]> {
+  return prisma.friendshipRequest.findMany({
+    where: { requesterId: playerId }
+  });
+}
+
+export async function getFriendsList(playerId: string) {
+  return prisma.player.findUnique({
+    where: { id: playerId },
+    select: {
+      aSideFriends: {
+        select: {
+          playerB: { select: { id: true, handle: true } },
+          createdAt: true
+        },
+        orderBy: {
+          playerB: {
+            handle: 'asc'
+          }
+        }
+      },
+      bSideFriends: {
+        select: {
+          playerA: { select: { id: true, handle: true } },
+          createdAt: true
+        },
+        orderBy: {
+          playerA: {
+            handle: 'asc'
+          }
+        }
+      }
+    }
   });
 }

@@ -13,6 +13,8 @@ datasource db {
 model Player {
   id               String              @id
   handle           String
+  email            String
+  profileImageUrl  String              @db.VarChar(768)
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @default(now())
   notifications    Notification[]

@@ -39,10 +39,17 @@ export default async function handler(
     // Process a POST request
     if (
       req.headers['content-type'] === 'application/json' &&
-      'handle' in req.body
+      'handle' in req.body &&
+      'email' in req.body &&
+      'profileImageUrl' in req.body
     ) {
       try {
-        const player = await createPlayer(id as string, req.body.handle);
+        const player = await createPlayer(
+          id as string,
+          req.body.handle,
+          req.body.email,
+          req.body.profileImageUrl
+        );
         res.status(200).json(player);
       } catch (err) {
         res.status(400).json({ error: err as string });

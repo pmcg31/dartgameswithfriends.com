@@ -1,6 +1,8 @@
 import Layout from '@/src/components/ui/layout/layout';
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
+import { BsBell } from 'react-icons/bs';
+import PageHeading from '../components/ui/common/page-heading';
 import FriendRequestNotification from '../components/ui/notification/friend-request-notification';
 import LinkNotification from '../components/ui/notification/link-notification';
 import SystemNotification from '../components/ui/notification/sys-notification';
@@ -27,7 +29,7 @@ export default function Notifications() {
           direction={'column'}
           gap={'1rem'}
         >
-          <Heading>Notifications</Heading>
+          <PageHeading icon={<BsBell />} heading={'Notifications'} />
           {notificationsQ.isSuccess && notificationsQ.data.length > 0 ? (
             notificationsQ.data.map((notification) => {
               const key = `n${notification.id}`;
