@@ -18,7 +18,7 @@ import { BsThreeDots } from 'react-icons/bs';
 export type FriendCardData = {
   playerId: string;
   addedText?: string;
-  buttons: { icon: JSX.Element; text: string }[];
+  buttons: { icon: JSX.Element; text: string; onClick: () => void }[];
   buttonsAsPopover?: boolean;
 };
 
@@ -99,6 +99,7 @@ export default function FriendCard({
                                       leftIcon={buttonData.icon}
                                       size={{ base: 'sm', sm: 'md' }}
                                       onClick={() => {
+                                        buttonData.onClick();
                                         onClose();
                                       }}
                                     >
@@ -132,6 +133,7 @@ export default function FriendCard({
                             colorScheme={'blackAlpha'}
                             leftIcon={buttonData.icon}
                             size={{ base: 'sm', sm: 'md' }}
+                            onClick={buttonData.onClick}
                           >
                             {buttonData.text}
                           </Button>

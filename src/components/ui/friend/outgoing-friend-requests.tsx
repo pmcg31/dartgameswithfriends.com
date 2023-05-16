@@ -25,7 +25,10 @@ export default function OutgoingFriendRequests({
         buttons: [
           {
             icon: <BsPersonSlash color={'#f00'} />,
-            text: 'Cancel'
+            text: 'Cancel',
+            onClick: () => {
+              console.log('cancel friend request clicked');
+            }
           }
         ],
         buttonsAsPopover: true

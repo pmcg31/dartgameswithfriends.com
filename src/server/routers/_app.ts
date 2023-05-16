@@ -10,7 +10,9 @@ import {
   notificationUpdateNew,
   getIncomingFriendRequests,
   getOutgoingFriendRequests,
-  getFriendsList
+  getFriendsList,
+  acceptFriendRequest,
+  rejectFriendRequest
 } from '@/src/lib/db-helper';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
@@ -91,7 +93,17 @@ export const appRouter = router({
     .query((opts) => getOutgoingFriendRequests(opts.input.playerId)),
   getFriendsList: procedure
     .input(z.object({ playerId: z.string() }))
-    .query((opts) => getFriendsList(opts.input.playerId))
+    .query((opts) => getFriendsList(opts.input.playerId)),
+  acceptFriendRequest: procedure
+    .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
+    .mutation((opts) =>
+      acceptFriendRequest(opts.input.requesterId, opts.input.addresseeId)
+    ),
+  rejectFriendRequest: procedure
+    .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
+    .mutation((opts) =>
+      rejectFriendRequest(opts.input.requesterId, opts.input.addresseeId)
+    )
 });
 
 // export type definition of API

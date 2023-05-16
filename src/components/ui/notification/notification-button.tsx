@@ -32,7 +32,10 @@ import LinkNotification from './link-notification';
 import SystemNotification from './sys-notification';
 import FriendRequestNotification from './friend-request-notification';
 import { useRouter } from 'next/router';
-import { LinkNotificationData } from '@/src/lib/dart-types';
+import {
+  FriendRequestNotificationData,
+  LinkNotificationData
+} from '@/src/lib/dart-types';
 
 export default function NotificationButton() {
   const router = useRouter();
@@ -84,6 +87,14 @@ export default function NotificationButton() {
         }
       }
     );
+  }
+
+  function acceptRequest(data: FriendRequestNotificationData) {
+    console.log(`accepting: data: ${JSON.stringify(data)}`);
+  }
+
+  function rejectRequest(data: FriendRequestNotificationData) {
+    console.log(`rejecting: data: ${JSON.stringify(data)}`);
   }
 
   // Assume no notifications for now
@@ -213,6 +224,12 @@ export default function NotificationButton() {
                       isNew={notification.isNew}
                       createdAt={new Date(notification.createdAt)}
                       data={data}
+                      onAcceptClicked={(data) => {
+                        acceptRequest(data);
+                      }}
+                      onRejectClicked={(data) => {
+                        rejectRequest(data);
+                      }}
                     />
                   );
                   meatballData.push({
@@ -220,6 +237,7 @@ export default function NotificationButton() {
                     icon: <BsPersonCheck color={'#0f0'} />,
                     buttonText: 'Accept',
                     onClick: () => {
+                      acceptRequest(data);
                       markRead(notification.id);
                     }
                   });
@@ -228,6 +246,7 @@ export default function NotificationButton() {
                     icon: <BsPersonDash color={'#f00'} />,
                     buttonText: 'Reject',
                     onClick: () => {
+                      rejectRequest(data);
                       markRead(notification.id);
                     }
                   });

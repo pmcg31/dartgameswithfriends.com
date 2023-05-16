@@ -12,7 +12,9 @@ export default function FriendRequestNotification({
   notificationId,
   isNew,
   createdAt,
-  data
+  data,
+  onAcceptClicked,
+  onRejectClicked
 }: {
   variant: 'popover' | 'full';
   id?: string;
@@ -20,7 +22,10 @@ export default function FriendRequestNotification({
   isNew: boolean;
   createdAt: Date;
   data: FriendRequestNotificationData;
+  onAcceptClicked: (data: FriendRequestNotificationData) => void;
+  onRejectClicked: (data: FriendRequestNotificationData) => void;
 }): JSX.Element | null {
+  // Set up player query
   const getPlayerQ = trpc.getPlayer.useQuery({ id: data.from });
 
   if (variant === 'popover') {
@@ -68,6 +73,9 @@ export default function FriendRequestNotification({
             colorScheme={'blackAlpha'}
             leftIcon={<BsPersonCheck color={'#0f0'} />}
             size={{ base: 'sm', sm: 'md' }}
+            onClick={() => {
+              onAcceptClicked(data);
+            }}
           >
             Accept
           </Button>
@@ -75,6 +83,9 @@ export default function FriendRequestNotification({
             colorScheme={'blackAlpha'}
             leftIcon={<BsPersonDash color={'#f00'} />}
             size={{ base: 'sm', sm: 'md' }}
+            onClick={() => {
+              onRejectClicked(data);
+            }}
           >
             Reject
           </Button>

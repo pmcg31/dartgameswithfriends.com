@@ -7,15 +7,25 @@ import FriendRequestNotification from '../components/ui/notification/friend-requ
 import LinkNotification from '../components/ui/notification/link-notification';
 import SystemNotification from '../components/ui/notification/sys-notification';
 import { trpc } from '../utils/trpc';
+import { useToast } from '@chakra-ui/react';
 
 export default function Notifications() {
+  const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
 
-  // Get query for notifications for logged in user
+  // Set up query for notifications for logged in user
   const notificationsQ = trpc.getNotifications.useQuery(
     { playerId: user ? user.id : '', limit: 10 },
     { enabled: isLoaded && isSignedIn }
   );
+
+  // Set up mutations for accept/reject
+  // friend request
+  const acceptFriendRequestM = trpc.acceptFriendRequest.useMutation();
+  const rejectFriendRequestM = trpc.rejectFriendRequest.useMutation();
+
+  // Get trpc utils
+  const utils = trpc.useContext();
 
   let content: JSX.Element | null = null;
   if (isLoaded) {
@@ -44,6 +54,57 @@ export default function Notifications() {
                     isNew={notification.isNew}
                     createdAt={new Date(notification.createdAt)}
                     data={data}
+                    onAcceptClicked={(data) => {
+                      acceptFriendRequestM.mutate(
+                        {
+                          requesterId: data.from,
+                          addresseeId: user.id
+                        },
+                        {
+                          onError: () => {
+                            toast({
+                              description:
+                                'Oops! Something went wrong and your friend request could not be accepted'
+                            });
+                          },
+                          onSuccess: () => {
+                            // Invalidate any queries that could
+                            // be affected by this update
+                            utils.getNotifications.invalidate();
+                            utils.getNewNotificationCount.invalidate();
+                            utils.getNotificationCount.invalidate();
+                            utils.getFriendsList.invalidate();
+                            utils.getIncomingFriendRequests.invalidate();
+                            utils.getOutgoingFriendRequests.invalidate();
+                          }
+                        }
+                      );
+                    }}
+                    onRejectClicked={(data) => {
+                      rejectFriendRequestM.mutate(
+                        {
+                          requesterId: data.from,
+                          addresseeId: user.id
+                        },
+                        {
+                          onError: () => {
+                            toast({
+                              description:
+                                'Oops! Something went wrong and your friend request could not be rejected'
+                            });
+                          },
+                          onSuccess: () => {
+                            // Invalidate any queries that could
+                            // be affected by this update
+                            utils.getNotifications.invalidate();
+                            utils.getNewNotificationCount.invalidate();
+                            utils.getNotificationCount.invalidate();
+                            utils.getIncomingFriendRequests.invalidate();
+                            utils.getOutgoingFriendRequests.invalidate();
+                          }
+                        }
+                      );
+                    }}
                   />
                 );
               } else if (kind === 'linkNotify') {

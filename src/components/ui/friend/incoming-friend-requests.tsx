@@ -5,10 +5,21 @@ import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
 import { FaRegHandPaper } from 'react-icons/fa';
 
+export type FriendRequestData = {
+  requesterId: string;
+  createdAt: string;
+};
+
 export default function IncomingFriendRequests({
-  playerId
+  playerId,
+  onAcceptClicked,
+  onRejectClicked,
+  onBlockClicked
 }: {
   playerId: string;
+  onAcceptClicked: (data: FriendRequestData) => void;
+  onRejectClicked: (data: FriendRequestData) => void;
+  onBlockClicked: (data: FriendRequestData) => void;
 }): JSX.Element {
   // Get query for incoming friend requests for
   // the specified player id
@@ -26,15 +37,31 @@ export default function IncomingFriendRequests({
         buttons: [
           {
             icon: <BsPersonCheck color={'#0f0'} />,
-            text: 'Accept'
+            text: 'Accept',
+            onClick: () => {
+              console.log(`ifr accept clicked: requesterId: ${requesterId}`);
+              onAcceptClicked({
+                requesterId,
+                createdAt
+              });
+            }
           },
           {
             icon: <BsPersonDash color={'#f00'} />,
-            text: 'Reject'
+            text: 'Reject',
+            onClick: () => {
+              onRejectClicked({
+                requesterId,
+                createdAt
+              });
+            }
           },
           {
             icon: <FaRegHandPaper color={'#f00'} />,
-            text: 'Block'
+            text: 'Block',
+            onClick: () => {
+              onBlockClicked({ requesterId, createdAt });
+            }
           }
         ],
         buttonsAsPopover: true

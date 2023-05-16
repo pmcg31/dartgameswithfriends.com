@@ -72,7 +72,13 @@ export default function FriendsList({
 
       // Consume data from chosen side
       const buttons = [
-        { icon: <BsPersonX color={'#f00'} />, text: 'Unfriend' }
+        {
+          icon: <BsPersonX color={'#f00'} />,
+          text: 'Unfriend',
+          onClick: () => {
+            console.log('unfriend clicked');
+          }
+        }
       ];
       if (isASide) {
         // Take from A side
