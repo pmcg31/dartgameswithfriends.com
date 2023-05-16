@@ -351,7 +351,7 @@ export default function NotificationButton() {
                           {({ onClose }) => (
                             <>
                               <PopoverTrigger>
-                                <Button size={'sm'} colorScheme={'blackAlpha'}>
+                                <Button size={'sm'}>
                                   <IconContext.Provider
                                     value={{
                                       className: 'shared-class',
@@ -374,7 +374,6 @@ export default function NotificationButton() {
                                       <Button
                                         key={value.key}
                                         leftIcon={value.icon}
-                                        colorScheme={'blackAlpha'}
                                         size={'sm'}
                                         onClick={() => {
                                           value.onClick();
@@ -394,7 +393,6 @@ export default function NotificationButton() {
                                         <BsEnvelopeDash />
                                       )
                                     }
-                                    colorScheme={'blackAlpha'}
                                     size={'sm'}
                                     onClick={() => {
                                       notificationUpdateNewM.mutate(
@@ -418,7 +416,6 @@ export default function NotificationButton() {
                                   <Button
                                     key={`${key}Delete`}
                                     leftIcon={<BsTrash3 />}
-                                    colorScheme={'blackAlpha'}
                                     size={'sm'}
                                     onClick={() => {
                                       deleteNotificationM.mutate(
@@ -453,7 +450,6 @@ export default function NotificationButton() {
               <PopoverFooter>
                 <Flex justifyContent={'end'}>
                   <Button
-                    colorScheme={'blackAlpha'}
                     size={'sm'}
                     onClick={() => {
                       router.push({ pathname: '/notifications' });

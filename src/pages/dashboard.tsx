@@ -33,7 +33,6 @@ export default function Dashboard() {
           >
             <Player playerId={user.id} size={'lg'} />
             <Button
-              colorScheme={'blackAlpha'}
               onClick={() => {
                 router.push('/user-profile');
               }}
@@ -47,21 +46,16 @@ export default function Dashboard() {
           >
             <DashCard title={'Game in Progress'}>
               <p style={{ opacity: '30%' }}>{'You have no game'}</p>
-              <Button mt={'0.5rem'} colorScheme={'blackAlpha'}>
-                View Games
-              </Button>
+              <Button mt={'0.5rem'}>View Games</Button>
             </DashCard>
             <DashCard title={'Private Lobby'}>
               <p>Friday Night Darts</p>
-              <Button mt={'0.5rem'} colorScheme={'blackAlpha'}>
-                Open Lobby
-              </Button>
+              <Button mt={'0.5rem'}>Open Lobby</Button>
             </DashCard>
             <DashCard title={'Friends'}>
               <p style={{ opacity: '30%' }}>{'You have no friends'}</p>
               <Button
                 mt={'0.5rem'}
-                colorScheme={'blackAlpha'}
                 onClick={() => {
                   router.push('/friends');
                 }}
@@ -71,7 +65,7 @@ export default function Dashboard() {
             </DashCard>
             <DashCard title={'Achievements'}>
               <p style={{ opacity: '30%' }}>{'You have no achievements'}</p>
-              <Button mt={'0.5rem'} colorScheme={'blackAlpha'} isDisabled>
+              <Button mt={'0.5rem'} isDisabled>
                 View All
               </Button>
             </DashCard>

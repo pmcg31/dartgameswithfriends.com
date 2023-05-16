@@ -76,7 +76,7 @@ export default function FriendCard({
                         {({ onClose }) => (
                           <>
                             <PopoverTrigger>
-                              <Button colorScheme={'blackAlpha'} size='sm'>
+                              <Button size='sm'>
                                 <IconContext.Provider
                                   value={{ size: '0.8rem' }}
                                 >
@@ -95,7 +95,6 @@ export default function FriendCard({
                                   return (
                                     <Button
                                       key={buttonData.text}
-                                      colorScheme={'blackAlpha'}
                                       leftIcon={buttonData.icon}
                                       size={{ base: 'sm', sm: 'md' }}
                                       onClick={() => {
@@ -130,7 +129,6 @@ export default function FriendCard({
                         return (
                           <Button
                             key={buttonData.text}
-                            colorScheme={'blackAlpha'}
                             leftIcon={buttonData.icon}
                             size={{ base: 'sm', sm: 'md' }}
                             onClick={buttonData.onClick}

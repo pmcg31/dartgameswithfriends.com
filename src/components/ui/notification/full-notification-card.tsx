@@ -74,7 +74,7 @@ export default function FullNotificationCard({
             {({ onClose }) => (
               <>
                 <PopoverTrigger>
-                  <Button colorScheme={'blackAlpha'} size='sm'>
+                  <Button size='sm'>
                     <IconContext.Provider value={{ size: '0.8rem' }}>
                       <BsThreeDots color={'#888'} />
                     </IconContext.Provider>
@@ -93,7 +93,6 @@ export default function FullNotificationCard({
                           <Button
                             key={data.text}
                             leftIcon={data.icon}
-                            colorScheme={'blackAlpha'}
                             size={'sm'}
                             onClick={() => {
                               data.onClick();
@@ -108,7 +107,6 @@ export default function FullNotificationCard({
                       leftIcon={
                         isNew ? <BsEnvelopeCheck /> : <BsEnvelopeDash />
                       }
-                      colorScheme={'blackAlpha'}
                       size={'sm'}
                       onClick={() => {
                         notificationUpdateNewM.mutate(
@@ -129,7 +127,6 @@ export default function FullNotificationCard({
                       Mark {isNew ? 'Read' : 'Unread'}
                     </Button>
                     <Button
-                      colorScheme={'blackAlpha'}
                       size={'sm'}
                       leftIcon={<BsTrash3 />}
                       onClick={() => {

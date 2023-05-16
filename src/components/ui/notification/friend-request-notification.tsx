@@ -71,7 +71,7 @@ export default function FriendRequestNotification({
       >
         <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
           <Button
-            colorScheme={'blackAlpha'}
+            //
             leftIcon={<BsPersonCheck color={'#0f0'} />}
             size={{ base: 'sm', sm: 'md' }}
             onClick={() => {
@@ -84,7 +84,6 @@ export default function FriendRequestNotification({
             Accept
           </Button>
           <Button
-            colorScheme={'blackAlpha'}
             leftIcon={<BsPersonDash color={'#f00'} />}
             size={{ base: 'sm', sm: 'md' }}
             onClick={() => {
