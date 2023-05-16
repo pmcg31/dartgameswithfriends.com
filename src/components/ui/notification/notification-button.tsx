@@ -12,32 +12,19 @@ import {
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import { trpc } from '@/src/utils/trpc';
-import {
-  BsBell,
-  BsBellFill,
-  BsFillCircleFill,
-  BsTrash3,
-  BsThreeDots,
-  BsEnvelopeCheck,
-  BsEnvelopeDash,
-  BsArrowUpRightSquare,
-  BsPersonCheck,
-  BsPersonDash,
-  BsBinoculars
-} from 'react-icons/bs';
-import { FaRegHandPaper } from 'react-icons/fa';
+import { BsBell, BsBellFill } from 'react-icons/bs';
 import { IconContext } from 'react-icons/lib';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import LinkNotification from './link-notification';
 import SystemNotification from './sys-notification';
 import FriendRequestNotification from './friend-request-notification';
 import { useRouter } from 'next/router';
 import {
-  FriendRequestNotificationData,
-  LinkNotificationData
-} from '@/src/lib/dart-types';
-import { FriendRequestData } from '../friend/incoming-friend-requests';
+  DeleteNotificationData,
+  ToggleNotificationReadData
+} from '@/src/lib/notification-types';
 import { useToast } from '@chakra-ui/react';
+import { FriendActionData } from '@/src/lib/friend-types';
 
 export default function NotificationButton() {
   const toast = useToast();
@@ -79,26 +66,10 @@ export default function NotificationButton() {
   const acceptFriendRequestM = trpc.acceptFriendRequest.useMutation();
   const rejectFriendRequestM = trpc.rejectFriendRequest.useMutation();
 
-  // Get trpc utils
-  const utils = trpc.useContext();
+  // Get trpc context
+  const trpcContext = trpc.useContext();
 
-  // Function that marks a notification read
-  function markRead(notificationId: number) {
-    notificationUpdateNewM.mutate(
-      {
-        notificationId,
-        isNew: false
-      },
-      {
-        onSuccess: () => {
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-        }
-      }
-    );
-  }
-
-  function acceptRequest(data: FriendRequestData & { addresseeId: string }) {
+  function acceptRequest(data: FriendActionData & { addresseeId: string }) {
     acceptFriendRequestM.mutate(
       {
         requesterId: data.requesterId,
@@ -114,18 +85,18 @@ export default function NotificationButton() {
         onSuccess: () => {
           // Invalidate any queries that could
           // be affected by this update
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
-          utils.getFriendsList.invalidate();
-          utils.getIncomingFriendRequests.invalidate();
-          utils.getOutgoingFriendRequests.invalidate();
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+          trpcContext.getNotificationCount.invalidate();
+          trpcContext.getFriendsList.invalidate();
+          trpcContext.getIncomingFriendRequests.invalidate();
+          trpcContext.getOutgoingFriendRequests.invalidate();
         }
       }
     );
   }
 
-  function rejectRequest(data: FriendRequestData & { addresseeId: string }) {
+  function rejectRequest(data: FriendActionData & { addresseeId: string }) {
     rejectFriendRequestM.mutate(
       {
         requesterId: data.requesterId,
@@ -141,11 +112,45 @@ export default function NotificationButton() {
         onSuccess: () => {
           // Invalidate any queries that could
           // be affected by this update
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
-          utils.getIncomingFriendRequests.invalidate();
-          utils.getOutgoingFriendRequests.invalidate();
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+          trpcContext.getNotificationCount.invalidate();
+          trpcContext.getIncomingFriendRequests.invalidate();
+          trpcContext.getOutgoingFriendRequests.invalidate();
+        }
+      }
+    );
+  }
+
+  function markNew(notificationId: number, isNew: boolean) {
+    notificationUpdateNewM.mutate(
+      {
+        notificationId,
+        isNew
+      },
+      {
+        onSuccess: () => {
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+        }
+      }
+    );
+  }
+
+  function toggleNotificationReadClicked(data: ToggleNotificationReadData) {
+    markNew(data.notificationId, !data.isNew);
+  }
+
+  function deleteNotificationClicked(data: DeleteNotificationData) {
+    deleteNotificationM.mutate(
+      {
+        notificationId: data.notificationId
+      },
+      {
+        onSuccess: () => {
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+          trpcContext.getNotificationCount.invalidate();
         }
       }
     );
@@ -171,46 +176,8 @@ export default function NotificationButton() {
               <Flex justifyContent={'center'}>Notifications</Flex>
             </PopoverHeader>
             <PopoverBody>
-              <Grid templateColumns={'auto 1fr auto'}>
+              <Flex direction={'column'}>
                 {notificationsQ.data.map((notification, idx) => {
-                  // Iterate notifications and create a card
-                  // for each one. Start by computing styles
-                  // for this row
-                  const key = `${notification.id}`;
-                  const rowPaddingInline = '0.5rem';
-                  const rowPaddingBlock = '0.25rem';
-                  const altBackgroundColor = 'rgba(0,0,0,0.2)';
-                  let newIconStyle: CSSProperties = {
-                    gridColumn: '1',
-                    paddingRight: '0.5rem',
-                    paddingLeft: rowPaddingInline,
-                    paddingBlock: rowPaddingBlock
-                  };
-                  let textStyle: CSSProperties = {
-                    gridColumn: '2',
-                    paddingBlock: rowPaddingBlock
-                  };
-                  let trashIconStyle: CSSProperties = {
-                    gridColumn: '3',
-                    paddingLeft: '0.5rem',
-                    paddingRight: rowPaddingInline,
-                    paddingBlock: rowPaddingBlock
-                  };
-                  if (idx % 2 !== 0) {
-                    newIconStyle = {
-                      ...newIconStyle,
-                      backgroundColor: altBackgroundColor
-                    };
-                    textStyle = {
-                      ...textStyle,
-                      backgroundColor: altBackgroundColor
-                    };
-                    trashIconStyle = {
-                      ...trashIconStyle,
-                      backgroundColor: altBackgroundColor
-                    };
-                  }
-
                   // Parse JSON in notification text and
                   // pull out its kind and the data for
                   // this notification
@@ -219,232 +186,69 @@ export default function NotificationButton() {
                   // Generate notification content and
                   // popover menu data based on the
                   // kind of notification this is
-                  let notificationContent: JSX.Element | null = null;
-                  const meatballData: {
-                    key: string;
-                    icon: JSX.Element;
-                    buttonText: string;
-                    onClick: () => void;
-                  }[] = [];
+                  const rowStyle = {
+                    backgroundColor:
+                      idx % 2 !== 0 ? 'rgba(0,0,0,0.2)' : 'initial'
+                  };
                   if (kind === 'sysNotify') {
                     // System notification
-                    notificationContent = (
+                    return (
                       <SystemNotification
+                        key={`n${notification.id}`}
                         variant={'popover'}
                         notificationId={notification.id}
                         isNew={notification.isNew}
                         createdAt={new Date(notification.createdAt)}
                         data={data}
+                        style={rowStyle}
+                        onToggleReadClicked={toggleNotificationReadClicked}
+                        onDeleteClicked={deleteNotificationClicked}
                       />
                     );
-                    meatballData.push({
-                      key: `${key}View`,
-                      icon: <BsBinoculars />,
-                      buttonText: 'View...',
-                      onClick: () => {
-                        markRead(notification.id);
-                        router.push({
-                          pathname: `/notifications`,
-                          hash: `n${notification.id}`
-                        });
-                      }
-                    });
                   } else if (kind === 'linkNotify') {
                     // Link notification
-                    notificationContent = (
+                    return (
                       <LinkNotification
+                        key={`n${notification.id}`}
                         variant={'popover'}
                         notificationId={notification.id}
                         isNew={notification.isNew}
                         createdAt={new Date(notification.createdAt)}
                         data={data}
+                        style={rowStyle}
+                        onToggleReadClicked={toggleNotificationReadClicked}
+                        onDeleteClicked={deleteNotificationClicked}
                       />
                     );
-                    meatballData.push({
-                      key: `${key}LearnMore`,
-                      icon: <BsArrowUpRightSquare />,
-                      buttonText: 'Learn more...',
-                      onClick: () => {
-                        router.push({
-                          pathname: (data as LinkNotificationData).url
-                        });
-                        markRead(notification.id);
-                      }
-                    });
                   } else if (kind === 'frNotify') {
                     // Friend request notification
-                    notificationContent = (
+                    return (
                       <FriendRequestNotification
+                        key={`n${notification.id}`}
                         variant={'popover'}
                         notificationId={notification.id}
                         isNew={notification.isNew}
                         createdAt={new Date(notification.createdAt)}
                         data={data}
+                        style={rowStyle}
                         onAcceptClicked={(data) => {
                           acceptRequest({ ...data, addresseeId: user.id });
+                          markNew(notification.id, false);
                         }}
                         onRejectClicked={(data) => {
                           rejectRequest({ ...data, addresseeId: user.id });
+                          markNew(notification.id, false);
                         }}
+                        onBlockClicked={() => {
+                          markNew(notification.id, false);
+                        }}
+                        onToggleReadClicked={toggleNotificationReadClicked}
+                        onDeleteClicked={deleteNotificationClicked}
                       />
                     );
-                    meatballData.push({
-                      key: `${key}Accept`,
-                      icon: <BsPersonCheck color={'#0f0'} />,
-                      buttonText: 'Accept',
-                      onClick: () => {
-                        const frData = data as FriendRequestNotificationData;
-                        acceptRequest({
-                          requesterId: frData.from,
-                          createdAt: frData.createdAt,
-                          addresseeId: user.id
-                        });
-                        markRead(notification.id);
-                      }
-                    });
-                    meatballData.push({
-                      key: `${key}Reject`,
-                      icon: <BsPersonDash color={'#f00'} />,
-                      buttonText: 'Reject',
-                      onClick: () => {
-                        const frData = data as FriendRequestNotificationData;
-                        rejectRequest({
-                          requesterId: frData.from,
-                          createdAt: frData.createdAt,
-                          addresseeId: user.id
-                        });
-                        markRead(notification.id);
-                      }
-                    });
-                    meatballData.push({
-                      key: `${key}Block`,
-                      icon: <FaRegHandPaper color={'#f00'} />,
-                      buttonText: 'Block',
-                      onClick: () => {
-                        markRead(notification.id);
-                      }
-                    });
                   }
-
-                  return (
-                    <React.Fragment key={key}>
-                      <Flex
-                        sx={newIconStyle}
-                        height='100%'
-                        alignItems={'center'}
-                      >
-                        {notification.isNew && (
-                          <IconContext.Provider value={{ size: '0.4rem' }}>
-                            <BsFillCircleFill color={'#0cf'} />
-                          </IconContext.Provider>
-                        )}
-                      </Flex>
-                      <Flex sx={textStyle} height='100%' alignItems={'center'}>
-                        {notificationContent}
-                      </Flex>
-                      <Flex
-                        sx={trashIconStyle}
-                        height='100%'
-                        alignItems={'center'}
-                      >
-                        <Popover offset={[-50, 0]}>
-                          {({ onClose }) => (
-                            <>
-                              <PopoverTrigger>
-                                <Button size={'sm'}>
-                                  <IconContext.Provider
-                                    value={{
-                                      className: 'shared-class',
-                                      size: '0.8rem'
-                                    }}
-                                  >
-                                    <BsThreeDots color={'#888'} />
-                                  </IconContext.Provider>
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent
-                                backgroundColor={'var(--brand-color)'}
-                                border={'2px solid #888'}
-                                width={'auto'}
-                                p={'0.5rem'}
-                              >
-                                <Flex direction={'column'} gap={'0.25rem'}>
-                                  {meatballData.map((value) => {
-                                    return (
-                                      <Button
-                                        key={value.key}
-                                        leftIcon={value.icon}
-                                        size={'sm'}
-                                        onClick={() => {
-                                          value.onClick();
-                                          onClose();
-                                        }}
-                                      >
-                                        {value.buttonText}
-                                      </Button>
-                                    );
-                                  })}
-                                  <Button
-                                    key={`${key}ToggleRead`}
-                                    leftIcon={
-                                      notification.isNew ? (
-                                        <BsEnvelopeCheck />
-                                      ) : (
-                                        <BsEnvelopeDash />
-                                      )
-                                    }
-                                    size={'sm'}
-                                    onClick={() => {
-                                      notificationUpdateNewM.mutate(
-                                        {
-                                          notificationId: notification.id,
-                                          isNew: !notification.isNew
-                                        },
-                                        {
-                                          onSuccess: () => {
-                                            utils.getNotifications.invalidate();
-                                            utils.getNewNotificationCount.invalidate();
-                                          }
-                                        }
-                                      );
-                                      onClose();
-                                    }}
-                                  >
-                                    Mark{' '}
-                                    {notification.isNew ? 'Read' : 'Unread'}
-                                  </Button>
-                                  <Button
-                                    key={`${key}Delete`}
-                                    leftIcon={<BsTrash3 />}
-                                    size={'sm'}
-                                    onClick={() => {
-                                      deleteNotificationM.mutate(
-                                        {
-                                          notificationId: notification.id
-                                        },
-                                        {
-                                          onSuccess: () => {
-                                            utils.getNotifications.invalidate();
-                                            utils.getNotificationCount.invalidate();
-                                            utils.getNewNotificationCount.invalidate();
-                                          }
-                                        }
-                                      );
-                                      onClose();
-                                    }}
-                                  >
-                                    Delete
-                                  </Button>
-                                </Flex>
-                              </PopoverContent>
-                            </>
-                          )}
-                        </Popover>
-                      </Flex>
-                    </React.Fragment>
-                  );
                 })}
-              </Grid>
+              </Flex>
             </PopoverBody>
             {notifyCountQ.data > maxNotifications && (
               <PopoverFooter>
@@ -482,8 +286,8 @@ export default function NotificationButton() {
     //           },
     //           {
     //             onSuccess: () => {
-    //               utils.getNotifications.invalidate();
-    //               utils.getNewNotificationCount.invalidate();
+    //               trpcContext.getNotifications.invalidate();
+    //               trpcContext.getNewNotificationCount.invalidate();
     //             }
     //           }
     //         );

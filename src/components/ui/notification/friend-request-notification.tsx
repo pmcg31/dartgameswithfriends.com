@@ -1,11 +1,16 @@
-import { FriendRequestNotificationData } from '@/src/lib/dart-types';
 import { trpc } from '@/src/utils/trpc';
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import FullNotificationCard from './full-notification-card';
 import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
 import { FaRegHandPaper } from 'react-icons/fa';
-import formatRelative from 'date-fns/formatRelative';
-import { FriendRequestData } from '../friend/incoming-friend-requests';
+import PopoverNotificationCard from './popover-notification-card';
+import {
+  ToggleNotificationReadClickedCallback,
+  DeleteNotificationClickedCallback,
+  FriendRequestNotificationData
+} from '@/src/lib/notification-types';
+import { FriendActionClickedCallback } from '@/src/lib/friend-types';
+import { CSSProperties } from 'react';
 
 export default function FriendRequestNotification({
   variant,
@@ -14,8 +19,12 @@ export default function FriendRequestNotification({
   isNew,
   createdAt,
   data,
+  style,
   onAcceptClicked,
-  onRejectClicked
+  onRejectClicked,
+  onBlockClicked,
+  onToggleReadClicked,
+  onDeleteClicked
 }: {
   variant: 'popover' | 'full';
   id?: string;
@@ -23,25 +32,68 @@ export default function FriendRequestNotification({
   isNew: boolean;
   createdAt: Date;
   data: FriendRequestNotificationData;
-  onAcceptClicked: (data: FriendRequestData) => void;
-  onRejectClicked: (data: FriendRequestData) => void;
+  style?: CSSProperties;
+  onAcceptClicked: FriendActionClickedCallback;
+  onRejectClicked: FriendActionClickedCallback;
+  onBlockClicked: FriendActionClickedCallback;
+  onToggleReadClicked: ToggleNotificationReadClickedCallback;
+  onDeleteClicked: DeleteNotificationClickedCallback;
 }): JSX.Element | null {
   // Set up player query
   const getPlayerQ = trpc.getPlayer.useQuery({ id: data.from });
 
   if (variant === 'popover') {
     return (
-      <Flex direction={'column'}>
-        <Text fontSize={'sm'}>
-          <span style={{ fontWeight: 700 }}>
-            @{(getPlayerQ.isSuccess && getPlayerQ.data?.handle) || 'unknown'}
-          </span>{' '}
-          wants to be friends
-        </Text>
-        <Text fontSize={'xs'} opacity={'50%'}>
-          {formatRelative(createdAt, new Date())}
-        </Text>
-      </Flex>
+      <PopoverNotificationCard
+        id={id}
+        buttonData={
+          getPlayerQ.isSuccess
+            ? [
+                {
+                  icon: <BsPersonCheck color={'#0f0'} />,
+                  onClick: () => {
+                    onAcceptClicked({
+                      requesterId: data.from,
+                      createdAt: data.createdAt
+                    });
+                  },
+                  text: 'Accept'
+                },
+                {
+                  icon: <BsPersonDash color={'#f00'} />,
+                  onClick: () => {
+                    onRejectClicked({
+                      requesterId: data.from,
+                      createdAt: data.createdAt
+                    });
+                  },
+                  text: 'Reject'
+                },
+                {
+                  icon: <FaRegHandPaper color={'#f00'} />,
+                  onClick: () => {
+                    onBlockClicked({
+                      requesterId: data.from,
+                      createdAt: data.createdAt
+                    });
+                  },
+                  text: 'Block'
+                }
+              ]
+            : []
+        }
+        notificationId={notificationId}
+        isNew={isNew || false}
+        createdAt={createdAt}
+        style={style}
+        onToggleReadClicked={onToggleReadClicked}
+        onDeleteClicked={onDeleteClicked}
+      >
+        <span style={{ fontWeight: 700 }}>
+          @{(getPlayerQ.isSuccess && getPlayerQ.data?.handle) || 'unknown'}
+        </span>{' '}
+        wants to be friends
+      </PopoverNotificationCard>
     );
   } else if (variant === 'full') {
     return (
@@ -53,7 +105,10 @@ export default function FriendRequestNotification({
                 {
                   icon: <FaRegHandPaper color={'#f00'} />,
                   onClick: () => {
-                    console.log('block clicked');
+                    onBlockClicked({
+                      requesterId: data.from,
+                      createdAt: data.createdAt
+                    });
                   },
                   text: `Block @${getPlayerQ.data?.handle}`
                 }
@@ -68,6 +123,8 @@ export default function FriendRequestNotification({
             ? `Friend Request from @${getPlayerQ.data?.handle}`
             : 'Friend Request'
         }
+        onToggleReadClicked={onToggleReadClicked}
+        onDeleteClicked={onDeleteClicked}
       >
         <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
           <Button

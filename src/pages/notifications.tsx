@@ -8,6 +8,10 @@ import LinkNotification from '../components/ui/notification/link-notification';
 import SystemNotification from '../components/ui/notification/sys-notification';
 import { trpc } from '../utils/trpc';
 import { useToast } from '@chakra-ui/react';
+import {
+  DeleteNotificationData,
+  ToggleNotificationReadData
+} from '../lib/notification-types';
 
 export default function Notifications() {
   const toast = useToast();
@@ -24,8 +28,48 @@ export default function Notifications() {
   const acceptFriendRequestM = trpc.acceptFriendRequest.useMutation();
   const rejectFriendRequestM = trpc.rejectFriendRequest.useMutation();
 
-  // Get trpc utils
-  const utils = trpc.useContext();
+  // Set up mutation for deleting a notification
+  const deleteNotificationM = trpc.deleteNotification.useMutation();
+
+  // Set up mutation for updating new status of notification
+  const notificationUpdateNewM = trpc.notificationUpdateNew.useMutation();
+
+  // Get trpc context
+  const trpcContext = trpc.useContext();
+
+  function markNew(notificationId: number, isNew: boolean) {
+    notificationUpdateNewM.mutate(
+      {
+        notificationId,
+        isNew
+      },
+      {
+        onSuccess: () => {
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+        }
+      }
+    );
+  }
+
+  function toggleNotificationReadClicked(data: ToggleNotificationReadData) {
+    markNew(data.notificationId, !data.isNew);
+  }
+
+  function deleteNotificationClicked(data: DeleteNotificationData) {
+    deleteNotificationM.mutate(
+      {
+        notificationId: data.notificationId
+      },
+      {
+        onSuccess: () => {
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+          trpcContext.getNotificationCount.invalidate();
+        }
+      }
+    );
+  }
 
   let content: JSX.Element | null = null;
   if (isLoaded) {
@@ -70,15 +114,16 @@ export default function Notifications() {
                           onSuccess: () => {
                             // Invalidate any queries that could
                             // be affected by this update
-                            utils.getNotifications.invalidate();
-                            utils.getNewNotificationCount.invalidate();
-                            utils.getNotificationCount.invalidate();
-                            utils.getFriendsList.invalidate();
-                            utils.getIncomingFriendRequests.invalidate();
-                            utils.getOutgoingFriendRequests.invalidate();
+                            trpcContext.getNotifications.invalidate();
+                            trpcContext.getNewNotificationCount.invalidate();
+                            trpcContext.getNotificationCount.invalidate();
+                            trpcContext.getFriendsList.invalidate();
+                            trpcContext.getIncomingFriendRequests.invalidate();
+                            trpcContext.getOutgoingFriendRequests.invalidate();
                           }
                         }
                       );
+                      markNew(notification.id, false);
                     }}
                     onRejectClicked={(data) => {
                       rejectFriendRequestM.mutate(
@@ -96,15 +141,21 @@ export default function Notifications() {
                           onSuccess: () => {
                             // Invalidate any queries that could
                             // be affected by this update
-                            utils.getNotifications.invalidate();
-                            utils.getNewNotificationCount.invalidate();
-                            utils.getNotificationCount.invalidate();
-                            utils.getIncomingFriendRequests.invalidate();
-                            utils.getOutgoingFriendRequests.invalidate();
+                            trpcContext.getNotifications.invalidate();
+                            trpcContext.getNewNotificationCount.invalidate();
+                            trpcContext.getNotificationCount.invalidate();
+                            trpcContext.getIncomingFriendRequests.invalidate();
+                            trpcContext.getOutgoingFriendRequests.invalidate();
                           }
                         }
                       );
+                      markNew(notification.id, false);
                     }}
+                    onBlockClicked={() => {
+                      markNew(notification.id, false);
+                    }}
+                    onToggleReadClicked={toggleNotificationReadClicked}
+                    onDeleteClicked={deleteNotificationClicked}
                   />
                 );
               } else if (kind === 'linkNotify') {
@@ -117,6 +168,8 @@ export default function Notifications() {
                     isNew={notification.isNew}
                     createdAt={new Date(notification.createdAt)}
                     data={data}
+                    onToggleReadClicked={toggleNotificationReadClicked}
+                    onDeleteClicked={deleteNotificationClicked}
                   />
                 );
               } else if (kind === 'sysNotify') {
@@ -129,6 +182,8 @@ export default function Notifications() {
                     isNew={notification.isNew}
                     createdAt={new Date(notification.createdAt)}
                     data={data}
+                    onToggleReadClicked={toggleNotificationReadClicked}
+                    onDeleteClicked={deleteNotificationClicked}
                   />
                 );
               } else {

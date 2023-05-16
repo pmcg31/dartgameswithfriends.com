@@ -1,4 +1,3 @@
-import { trpc } from '@/src/utils/trpc';
 import {
   Button,
   Flex,
@@ -19,6 +18,10 @@ import {
 } from 'react-icons/bs';
 import formatRelative from 'date-fns/formatRelative';
 import GenericCard from '../common/generic-card';
+import {
+  DeleteNotificationClickedCallback,
+  ToggleNotificationReadClickedCallback
+} from '@/src/lib/notification-types';
 
 export default function FullNotificationCard({
   title,
@@ -27,6 +30,8 @@ export default function FullNotificationCard({
   notificationId,
   isNew,
   createdAt,
+  onToggleReadClicked,
+  onDeleteClicked,
   children
 }: PropsWithChildren<{
   title: string;
@@ -35,16 +40,9 @@ export default function FullNotificationCard({
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
+  onToggleReadClicked: ToggleNotificationReadClickedCallback;
+  onDeleteClicked: DeleteNotificationClickedCallback;
 }>) {
-  // Get mutation for deleting a notification
-  const deleteNotificationM = trpc.deleteNotification.useMutation();
-
-  // Get mutation for updating new status of notification
-  const notificationUpdateNewM = trpc.notificationUpdateNew.useMutation();
-
-  // Get trpc utils
-  const utils = trpc.useContext();
-
   return (
     <GenericCard
       id={id}
@@ -109,18 +107,7 @@ export default function FullNotificationCard({
                       }
                       size={'sm'}
                       onClick={() => {
-                        notificationUpdateNewM.mutate(
-                          {
-                            notificationId: notificationId,
-                            isNew: !isNew
-                          },
-                          {
-                            onSuccess: () => {
-                              utils.getNotifications.invalidate();
-                              utils.getNewNotificationCount.invalidate();
-                            }
-                          }
-                        );
+                        onToggleReadClicked({ notificationId, isNew });
                         onClose();
                       }}
                     >
@@ -130,18 +117,7 @@ export default function FullNotificationCard({
                       size={'sm'}
                       leftIcon={<BsTrash3 />}
                       onClick={() => {
-                        deleteNotificationM.mutate(
-                          {
-                            notificationId: notificationId
-                          },
-                          {
-                            onSuccess: () => {
-                              utils.getNotifications.invalidate();
-                              utils.getNotificationCount.invalidate();
-                              utils.getNewNotificationCount.invalidate();
-                            }
-                          }
-                        );
+                        onDeleteClicked({ notificationId });
                         onClose();
                       }}
                     >

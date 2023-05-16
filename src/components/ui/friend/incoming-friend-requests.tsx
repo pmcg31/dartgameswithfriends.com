@@ -4,11 +4,7 @@ import { formatRelative } from 'date-fns';
 import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
 import { FaRegHandPaper } from 'react-icons/fa';
-
-export type FriendRequestData = {
-  requesterId: string;
-  createdAt: string;
-};
+import { FriendActionClickedCallback } from '@/src/lib/friend-types';
 
 export default function IncomingFriendRequests({
   playerId,
@@ -17,9 +13,9 @@ export default function IncomingFriendRequests({
   onBlockClicked
 }: {
   playerId: string;
-  onAcceptClicked: (data: FriendRequestData) => void;
-  onRejectClicked: (data: FriendRequestData) => void;
-  onBlockClicked: (data: FriendRequestData) => void;
+  onAcceptClicked: FriendActionClickedCallback;
+  onRejectClicked: FriendActionClickedCallback;
+  onBlockClicked: FriendActionClickedCallback;
 }): JSX.Element {
   // Get query for incoming friend requests for
   // the specified player id
