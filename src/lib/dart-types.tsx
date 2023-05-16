@@ -52,7 +52,7 @@ export type LinkNotificationData = {
 
 export type FriendRequestNotificationData = {
   from: string;
-  createdAt: Date;
+  createdAt: string;
 };
 
 export type Notification = {

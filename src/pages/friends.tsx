@@ -37,7 +37,6 @@ export default function Friends() {
           <IncomingFriendRequests
             playerId={user.id}
             onAcceptClicked={(data) => {
-              console.log(`accept clicked: data: ${JSON.stringify(data)}`);
               acceptFriendRequestM.mutate(
                 {
                   requesterId: data.requesterId,

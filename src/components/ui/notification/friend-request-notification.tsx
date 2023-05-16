@@ -5,6 +5,7 @@ import FullNotificationCard from './full-notification-card';
 import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
 import { FaRegHandPaper } from 'react-icons/fa';
 import formatRelative from 'date-fns/formatRelative';
+import { FriendRequestData } from '../friend/incoming-friend-requests';
 
 export default function FriendRequestNotification({
   variant,
@@ -22,8 +23,8 @@ export default function FriendRequestNotification({
   isNew: boolean;
   createdAt: Date;
   data: FriendRequestNotificationData;
-  onAcceptClicked: (data: FriendRequestNotificationData) => void;
-  onRejectClicked: (data: FriendRequestNotificationData) => void;
+  onAcceptClicked: (data: FriendRequestData) => void;
+  onRejectClicked: (data: FriendRequestData) => void;
 }): JSX.Element | null {
   // Set up player query
   const getPlayerQ = trpc.getPlayer.useQuery({ id: data.from });
@@ -74,7 +75,10 @@ export default function FriendRequestNotification({
             leftIcon={<BsPersonCheck color={'#0f0'} />}
             size={{ base: 'sm', sm: 'md' }}
             onClick={() => {
-              onAcceptClicked(data);
+              onAcceptClicked({
+                requesterId: data.from,
+                createdAt: data.createdAt
+              });
             }}
           >
             Accept
@@ -84,7 +88,10 @@ export default function FriendRequestNotification({
             leftIcon={<BsPersonDash color={'#f00'} />}
             size={{ base: 'sm', sm: 'md' }}
             onClick={() => {
-              onRejectClicked(data);
+              onRejectClicked({
+                requesterId: data.from,
+                createdAt: data.createdAt
+              });
             }}
           >
             Reject

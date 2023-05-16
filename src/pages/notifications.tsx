@@ -57,7 +57,7 @@ export default function Notifications() {
                     onAcceptClicked={(data) => {
                       acceptFriendRequestM.mutate(
                         {
-                          requesterId: data.from,
+                          requesterId: data.requesterId,
                           addresseeId: user.id
                         },
                         {
@@ -83,7 +83,7 @@ export default function Notifications() {
                     onRejectClicked={(data) => {
                       rejectFriendRequestM.mutate(
                         {
-                          requesterId: data.from,
+                          requesterId: data.requesterId,
                           addresseeId: user.id
                         },
                         {
