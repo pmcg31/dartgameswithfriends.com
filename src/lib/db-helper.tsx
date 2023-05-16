@@ -117,6 +117,18 @@ export async function getFriendsList(playerId: string) {
   });
 }
 
+export async function friendRequestExists(
+  requesterId: string,
+  addresseeId: string
+): Promise<boolean> {
+  // Check whether there is a friend request for these ids
+  const count = await prisma.friendshipRequest.count({
+    where: { requesterId, addresseeId }
+  });
+
+  return count === 1;
+}
+
 export async function acceptFriendRequest(
   requesterId: string,
   addresseeId: string

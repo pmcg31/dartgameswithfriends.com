@@ -12,7 +12,8 @@ import {
   getOutgoingFriendRequests,
   getFriendsList,
   acceptFriendRequest,
-  rejectFriendRequest
+  rejectFriendRequest,
+  friendRequestExists
 } from '@/src/lib/db-helper';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
@@ -94,6 +95,11 @@ export const appRouter = router({
   getFriendsList: procedure
     .input(z.object({ playerId: z.string() }))
     .query((opts) => getFriendsList(opts.input.playerId)),
+  friendRequestExists: procedure
+    .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
+    .query((opts) =>
+      friendRequestExists(opts.input.requesterId, opts.input.addresseeId)
+    ),
   acceptFriendRequest: procedure
     .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
     .mutation((opts) =>

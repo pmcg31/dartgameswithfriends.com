@@ -1,5 +1,5 @@
 import { trpc } from '@/src/utils/trpc';
-import { Button, Flex } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import FullNotificationCard from './full-notification-card';
 import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
 import { FaRegHandPaper } from 'react-icons/fa';
@@ -31,7 +31,7 @@ export default function FriendRequestNotification({
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
-  data: FriendRequestNotificationData;
+  data: FriendRequestNotificationData & { userId: string };
   style?: CSSProperties;
   onAcceptClicked: FriendActionClickedCallback;
   onRejectClicked: FriendActionClickedCallback;
@@ -42,12 +42,20 @@ export default function FriendRequestNotification({
   // Set up player query
   const getPlayerQ = trpc.getPlayer.useQuery({ id: data.from });
 
+  // Set up friend request existence query
+  const friendRequestExistsQ = trpc.friendRequestExists.useQuery({
+    requesterId: data.from,
+    addresseeId: data.userId
+  });
+
   if (variant === 'popover') {
     return (
       <PopoverNotificationCard
         id={id}
         buttonData={
-          getPlayerQ.isSuccess
+          getPlayerQ.isSuccess &&
+          friendRequestExistsQ.isSuccess &&
+          friendRequestExistsQ.data
             ? [
                 {
                   icon: <BsPersonCheck color={'#0f0'} />,
@@ -85,6 +93,7 @@ export default function FriendRequestNotification({
         notificationId={notificationId}
         isNew={isNew || false}
         createdAt={createdAt}
+        isDefunct={friendRequestExistsQ.isSuccess && !friendRequestExistsQ.data}
         style={style}
         onToggleReadClicked={onToggleReadClicked}
         onDeleteClicked={onDeleteClicked}
@@ -100,7 +109,9 @@ export default function FriendRequestNotification({
       <FullNotificationCard
         id={id}
         buttonData={
-          getPlayerQ.isSuccess
+          getPlayerQ.isSuccess &&
+          friendRequestExistsQ.isSuccess &&
+          friendRequestExistsQ.data
             ? [
                 {
                   icon: <FaRegHandPaper color={'#f00'} />,
@@ -127,31 +138,37 @@ export default function FriendRequestNotification({
         onDeleteClicked={onDeleteClicked}
       >
         <Flex gap={'0.5rem'} wrap={'wrap'} justifyContent={'center'}>
-          <Button
-            //
-            leftIcon={<BsPersonCheck color={'#0f0'} />}
-            size={{ base: 'sm', sm: 'md' }}
-            onClick={() => {
-              onAcceptClicked({
-                requesterId: data.from,
-                createdAt: data.createdAt
-              });
-            }}
-          >
-            Accept
-          </Button>
-          <Button
-            leftIcon={<BsPersonDash color={'#f00'} />}
-            size={{ base: 'sm', sm: 'md' }}
-            onClick={() => {
-              onRejectClicked({
-                requesterId: data.from,
-                createdAt: data.createdAt
-              });
-            }}
-          >
-            Reject
-          </Button>
+          {friendRequestExistsQ.isSuccess && friendRequestExistsQ.data ? (
+            <>
+              <Button
+                //
+                leftIcon={<BsPersonCheck color={'#0f0'} />}
+                size={{ base: 'sm', sm: 'md' }}
+                onClick={() => {
+                  onAcceptClicked({
+                    requesterId: data.from,
+                    createdAt: data.createdAt
+                  });
+                }}
+              >
+                Accept
+              </Button>
+              <Button
+                leftIcon={<BsPersonDash color={'#f00'} />}
+                size={{ base: 'sm', sm: 'md' }}
+                onClick={() => {
+                  onRejectClicked({
+                    requesterId: data.from,
+                    createdAt: data.createdAt
+                  });
+                }}
+              >
+                Reject
+              </Button>
+            </>
+          ) : (
+            <Text opacity={'30%'}>This request is no longer active.</Text>
+          )}
         </Flex>
       </FullNotificationCard>
     );

@@ -28,6 +28,7 @@ export default function PopoverNotificationCard({
   notificationId,
   isNew,
   createdAt,
+  isDefunct,
   style,
   onToggleReadClicked,
   onDeleteClicked,
@@ -38,6 +39,7 @@ export default function PopoverNotificationCard({
   notificationId: number;
   isNew: boolean;
   createdAt: Date;
+  isDefunct?: boolean;
   style?: CSSProperties;
   onToggleReadClicked: ToggleNotificationReadClickedCallback;
   onDeleteClicked: DeleteNotificationClickedCallback;
@@ -51,9 +53,16 @@ export default function PopoverNotificationCard({
       </Flex>
       <Flex alignItems={'center'} grow={1} paddingInline={'0.5rem'}>
         <Flex direction={'column'}>
-          <Text fontSize={'sm'}>{children}</Text>
+          <Text
+            fontSize={'sm'}
+            textDecoration={isDefunct ? 'line-through' : 'initial'}
+          >
+            {children}
+          </Text>
           <Text fontSize={'xs'} opacity={'50%'}>
-            {formatRelative(createdAt, new Date())}
+            {isDefunct
+              ? 'This request is no longer active'
+              : formatRelative(createdAt, new Date())}
           </Text>
         </Flex>
       </Flex>

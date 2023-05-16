@@ -229,7 +229,7 @@ export default function NotificationButton() {
                         notificationId={notification.id}
                         isNew={notification.isNew}
                         createdAt={new Date(notification.createdAt)}
-                        data={data}
+                        data={{ ...data, userId: user.id }}
                         style={rowStyle}
                         onAcceptClicked={(data) => {
                           acceptRequest({ ...data, addresseeId: user.id });

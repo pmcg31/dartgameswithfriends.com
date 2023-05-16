@@ -151,7 +151,7 @@ export default function Notifications() {
                     notificationId={notification.id}
                     isNew={notification.isNew}
                     createdAt={new Date(notification.createdAt)}
-                    data={data}
+                    data={{ ...data, userId: user.id }}
                     onAcceptClicked={(data) => {
                       acceptRequest({ ...data, addresseeId: user.id });
                       markNew(notification.id, false);
