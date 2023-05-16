@@ -12,6 +12,7 @@ import {
   DeleteNotificationData,
   ToggleNotificationReadData
 } from '../lib/notification-types';
+import { FriendActionData } from '../lib/friend-types';
 
 export default function Notifications() {
   const toast = useToast();
@@ -36,6 +37,59 @@ export default function Notifications() {
 
   // Get trpc context
   const trpcContext = trpc.useContext();
+
+  function acceptRequest(data: FriendActionData & { addresseeId: string }) {
+    acceptFriendRequestM.mutate(
+      {
+        requesterId: data.requesterId,
+        addresseeId: data.addresseeId
+      },
+      {
+        onError: () => {
+          toast({
+            description:
+              'Oops! Something went wrong and your friend request could not be accepted'
+          });
+        },
+        onSuccess: () => {
+          // Invalidate any queries that could
+          // be affected by this update
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+          trpcContext.getNotificationCount.invalidate();
+          trpcContext.getFriendsList.invalidate();
+          trpcContext.getIncomingFriendRequests.invalidate();
+          trpcContext.getOutgoingFriendRequests.invalidate();
+        }
+      }
+    );
+  }
+
+  function rejectRequest(data: FriendActionData & { addresseeId: string }) {
+    rejectFriendRequestM.mutate(
+      {
+        requesterId: data.requesterId,
+        addresseeId: data.addresseeId
+      },
+      {
+        onError: () => {
+          toast({
+            description:
+              'Oops! Something went wrong and your friend request could not be rejected'
+          });
+        },
+        onSuccess: () => {
+          // Invalidate any queries that could
+          // be affected by this update
+          trpcContext.getNotifications.invalidate();
+          trpcContext.getNewNotificationCount.invalidate();
+          trpcContext.getNotificationCount.invalidate();
+          trpcContext.getIncomingFriendRequests.invalidate();
+          trpcContext.getOutgoingFriendRequests.invalidate();
+        }
+      }
+    );
+  }
 
   function markNew(notificationId: number, isNew: boolean) {
     notificationUpdateNewM.mutate(
@@ -99,56 +153,11 @@ export default function Notifications() {
                     createdAt={new Date(notification.createdAt)}
                     data={data}
                     onAcceptClicked={(data) => {
-                      acceptFriendRequestM.mutate(
-                        {
-                          requesterId: data.requesterId,
-                          addresseeId: user.id
-                        },
-                        {
-                          onError: () => {
-                            toast({
-                              description:
-                                'Oops! Something went wrong and your friend request could not be accepted'
-                            });
-                          },
-                          onSuccess: () => {
-                            // Invalidate any queries that could
-                            // be affected by this update
-                            trpcContext.getNotifications.invalidate();
-                            trpcContext.getNewNotificationCount.invalidate();
-                            trpcContext.getNotificationCount.invalidate();
-                            trpcContext.getFriendsList.invalidate();
-                            trpcContext.getIncomingFriendRequests.invalidate();
-                            trpcContext.getOutgoingFriendRequests.invalidate();
-                          }
-                        }
-                      );
+                      acceptRequest({ ...data, addresseeId: user.id });
                       markNew(notification.id, false);
                     }}
                     onRejectClicked={(data) => {
-                      rejectFriendRequestM.mutate(
-                        {
-                          requesterId: data.requesterId,
-                          addresseeId: user.id
-                        },
-                        {
-                          onError: () => {
-                            toast({
-                              description:
-                                'Oops! Something went wrong and your friend request could not be rejected'
-                            });
-                          },
-                          onSuccess: () => {
-                            // Invalidate any queries that could
-                            // be affected by this update
-                            trpcContext.getNotifications.invalidate();
-                            trpcContext.getNewNotificationCount.invalidate();
-                            trpcContext.getNotificationCount.invalidate();
-                            trpcContext.getIncomingFriendRequests.invalidate();
-                            trpcContext.getOutgoingFriendRequests.invalidate();
-                          }
-                        }
-                      );
+                      rejectRequest({ ...data, addresseeId: user.id });
                       markNew(notification.id, false);
                     }}
                     onBlockClicked={() => {
