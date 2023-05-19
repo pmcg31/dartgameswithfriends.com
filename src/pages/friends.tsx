@@ -88,7 +88,7 @@ export default function Friends() {
               );
             }}
             onBlockClicked={(data) => {
-              console.log(`block clicked: data: ${JSON.stringify(data)}`);
+              console.log(`block clicked: data is: ${JSON.stringify(data)}`);
             }}
           />
           <OutgoingFriendRequests playerId={user.id} />
