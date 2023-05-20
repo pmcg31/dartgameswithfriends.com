@@ -53,6 +53,9 @@ export default function Layout({
   // Update player mutation
   const updatePlayerMutation = trpc.updatePlayer.useMutation();
 
+  // Get trpc utils
+  const utils = trpc.useContext();
+
   // Synchronize the player for the signed-in user
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -71,12 +74,10 @@ export default function Layout({
             {
               onError: (error) => {
                 console.log(`Create player error: ${JSON.stringify(error)}`);
+              },
+              onSuccess: () => {
+                utils.getPlayer.invalidate();
               }
-              // onSuccess: (data) => {
-              //   console.log(
-              //     `Create player success: data: ${JSON.stringify(data)}`
-              //   );
-              // }
             }
           );
         } else {
@@ -111,12 +112,10 @@ export default function Layout({
               {
                 onError: (error) => {
                   console.log(`Update player error: ${JSON.stringify(error)}`);
+                },
+                onSuccess: () => {
+                  utils.getPlayer.invalidate();
                 }
-                // onSuccess: (data) => {
-                //   console.log(
-                //     `Update player success: data: ${JSON.stringify(data)}`
-                //   );
-                // }
               }
             );
           }
