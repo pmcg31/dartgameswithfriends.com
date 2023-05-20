@@ -15,15 +15,21 @@ import FriendsList from '@/src/components/ui/friend/friends-list';
 import IncomingFriendRequests from '@/src/components/ui/friend/incoming-friend-requests';
 import OutgoingFriendRequests from '@/src/components/ui/friend/outgoing-friend-requests';
 import { useToast } from '@chakra-ui/react';
+import FindFriends from '../components/ui/friend/find-friends';
 
 export default function Friends() {
   const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
 
-  // Set up mutations for accept/reject
+  // Set up mutations for create/accept/reject/delete
   // friend request
+  const createFriendRequestM = trpc.createFriendRequest.useMutation();
   const acceptFriendRequestM = trpc.acceptFriendRequest.useMutation();
   const rejectFriendRequestM = trpc.rejectFriendRequest.useMutation();
+  const deleteFriendRequestM = trpc.deleteFriendRequest.useMutation();
+
+  // Set up mutation for delete friend
+  const deleteFriendM = trpc.deleteFriend.useMutation();
 
   // Get trpc utils
   const utils = trpc.useContext();
@@ -43,12 +49,43 @@ export default function Friends() {
           <PageHeading icon={<BsPeople />} heading='Friends' />
           <Tabs variant={'line'} size={'sm'}>
             <TabList>
+              <Tab>Friend List</Tab>
               <Tab>Incoming Requests</Tab>
               <Tab>Outgoing Requests</Tab>
-              <Tab>Friend List</Tab>
               <Tab>Find Friends</Tab>
             </TabList>
             <TabPanels>
+              <TabPanel>
+                <FriendsList
+                  playerId={user.id}
+                  onUnfriendClicked={({ playerId1, playerId2 }) => {
+                    deleteFriendM.mutate(
+                      {
+                        playerId1,
+                        playerId2
+                      },
+                      {
+                        onError: () => {
+                          toast({
+                            description:
+                              'Oops! Something went wrong and your friend could not be removed'
+                          });
+                        },
+                        onSuccess: () => {
+                          toast({
+                            description: 'Your friend has been removed'
+                          });
+
+                          // Invalidate any queries that could
+                          // be affected by this update
+                          utils.findFriends.invalidate();
+                          utils.getFriendsList.invalidate();
+                        }
+                      }
+                    );
+                  }}
+                />
+              </TabPanel>
               <TabPanel>
                 <IncomingFriendRequests
                   playerId={user.id}
@@ -79,6 +116,10 @@ export default function Friends() {
                     );
                   }}
                   onRejectClicked={(data) => {
+                    toast({
+                      description: 'Your friend request has been rejected'
+                    });
+
                     rejectFriendRequestM.mutate(
                       {
                         requesterId: data.requesterId,
@@ -111,10 +152,74 @@ export default function Friends() {
                 />
               </TabPanel>
               <TabPanel>
-                <OutgoingFriendRequests playerId={user.id} />
+                <OutgoingFriendRequests
+                  playerId={user.id}
+                  onCancelClicked={({ requesterId, addresseeId }) => {
+                    deleteFriendRequestM.mutate(
+                      {
+                        requesterId,
+                        addresseeId
+                      },
+                      {
+                        onError: () => {
+                          toast({
+                            description:
+                              'Oops! Something went wrong and your friend request could not be rejected'
+                          });
+                        },
+                        onSuccess: () => {
+                          toast({
+                            description: 'Your friend request has been canceled'
+                          });
+
+                          // Invalidate any queries that could
+                          // be affected by this update
+                          utils.friendRequestExists.invalidate();
+                          utils.getIncomingFriendRequests.invalidate();
+                          utils.getOutgoingFriendRequests.invalidate();
+                          utils.findFriends.invalidate();
+                        }
+                      }
+                    );
+                  }}
+                />
               </TabPanel>
               <TabPanel>
-                <FriendsList playerId={user.id} />
+                <FindFriends
+                  playerId={user.id}
+                  limit={5}
+                  onAddFriendClicked={({ requesterId, addresseeId }) => {
+                    createFriendRequestM.mutate(
+                      {
+                        requesterId,
+                        addresseeId
+                      },
+                      {
+                        onError: () => {
+                          toast({
+                            description:
+                              'Oops! Something went wrong and your friend request could not be sent'
+                          });
+                        },
+                        onSuccess: () => {
+                          toast({
+                            description: 'Your friend request has been sent!'
+                          });
+
+                          // Invalidate any queries that could
+                          // be affected by this update
+                          utils.findFriends.invalidate();
+                          utils.friendRequestExists.invalidate();
+                          utils.getIncomingFriendRequests.invalidate();
+                          utils.getOutgoingFriendRequests.invalidate();
+                          utils.getNewNotificationCount.invalidate();
+                          utils.getNotificationCount.invalidate();
+                          utils.getNotifications.invalidate();
+                        }
+                      }
+                    );
+                  }}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>

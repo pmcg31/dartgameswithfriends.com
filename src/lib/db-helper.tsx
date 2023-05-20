@@ -1,4 +1,9 @@
-import { Player, Notification, FriendshipRequest } from '@prisma/client';
+import {
+  Player,
+  Notification,
+  FriendshipRequest,
+  Friendship
+} from '@prisma/client';
 import prisma from '@/src/lib/prisma';
 
 export async function getPlayer(id: string): Promise<Player | null> {
@@ -225,4 +230,107 @@ export async function rejectFriendRequest(
     // No pending friend request for those ids
     return false;
   }
+}
+
+export async function findFriends(
+  requesterId: string,
+  searchText: string,
+  limit?: number
+) {
+  // a and b side friends: check that candidate player is not
+  //                       already a friend
+  // ob and ib requests: check that candidate player is not
+  //                     already a pending friend
+  // id: check that candidate player is not the requester's
+  //     self
+  // If all that is ok, then take candidates where search
+  // text is in either the handle or email field
+  //
+  // return only player ids
+
+  // Optionally include take if a limit was given
+  let take = {};
+  if (limit) {
+    take = { take: limit };
+  }
+
+  return prisma.player.findMany({
+    ...take,
+    orderBy: {
+      handle: 'asc'
+    },
+    where: {
+      aSideFriends: { none: { playerBId: requesterId } },
+      bSideFriends: { none: { playerAId: requesterId } },
+      obFriendRequests: { none: { addresseeId: requesterId } },
+      ibFriendRequests: { none: { requesterId } },
+      id: { not: requesterId },
+      OR: [
+        {
+          handle: {
+            contains: searchText
+          }
+        },
+        {
+          email: {
+            contains: searchText
+          }
+        }
+      ]
+    },
+    select: {
+      id: true
+    }
+  });
+}
+
+export async function createFriendRequest(
+  requesterId: string,
+  addresseeId: string
+): Promise<FriendshipRequest> {
+  // Create friend request
+  const fr = await prisma.friendshipRequest.create({
+    data: { requesterId, addresseeId }
+  });
+
+  // Create a notification for the addressee
+  await prisma.notification.create({
+    data: {
+      playerId: addresseeId,
+      isNew: true,
+      text: JSON.stringify({
+        kind: 'frNotify',
+        data: {
+          from: requesterId,
+          createdAt: fr.createdAt
+        }
+      })
+    }
+  });
+
+  // Return the friend request
+  return fr;
+}
+
+export async function deleteFriendRequest(
+  requesterId: string,
+  addresseeId: string
+): Promise<FriendshipRequest> {
+  return prisma.friendshipRequest.delete({
+    where: { requesterId_addresseeId: { requesterId, addresseeId } }
+  });
+}
+
+export async function deleteFriend(
+  playerId1: string,
+  playerId2: string
+): Promise<Friendship> {
+  return prisma.friendship.delete({
+    where: {
+      playerAId_playerBId: {
+        playerAId: playerId1 < playerId2 ? playerId1 : playerId2,
+        playerBId: playerId1 < playerId2 ? playerId2 : playerId1
+      }
+    }
+  });
 }

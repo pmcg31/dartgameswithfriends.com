@@ -1,3 +1,4 @@
+import { UnfriendActionData } from '@/src/lib/friend-types';
 import { trpc } from '@/src/utils/trpc';
 import React from 'react';
 import { BsPersonX } from 'react-icons/bs';
@@ -32,9 +33,11 @@ function formatFriendSince(when: Date) {
 }
 
 export default function FriendsList({
-  playerId
+  playerId,
+  onUnfriendClicked
 }: {
   playerId: string;
+  onUnfriendClicked: (data: UnfriendActionData) => void;
 }): JSX.Element {
   // Get query for friends list for
   // the specified player id
@@ -71,34 +74,49 @@ export default function FriendsList({
       }
 
       // Consume data from chosen side
-      const buttons = [
-        {
-          icon: <BsPersonX color={'#f00'} />,
-          text: 'Unfriend',
-          onClick: () => {
-            console.log('unfriend clicked');
-          }
-        }
-      ];
       if (isASide) {
         // Take from A side
+        const id = friendsListQ.data.aSideFriends[aIdx].playerB.id;
         data.push({
-          playerId: friendsListQ.data.aSideFriends[aIdx].playerB.id,
+          playerId: id,
           addedText: formatFriendSince(
             new Date(friendsListQ.data.aSideFriends[aIdx].createdAt)
           ),
-          buttons,
+          buttons: [
+            {
+              icon: <BsPersonX color={'#f00'} />,
+              text: 'Unfriend',
+              onClick: () => {
+                onUnfriendClicked({
+                  playerId1: playerId,
+                  playerId2: id
+                });
+              }
+            }
+          ],
           buttonsAsPopover: true
         });
         aIdx++;
       } else {
         // Take from B side
+        const id = friendsListQ.data.bSideFriends[bIdx].playerA.id;
         data.push({
-          playerId: friendsListQ.data.bSideFriends[bIdx].playerA.id,
+          playerId: id,
           addedText: formatFriendSince(
             new Date(friendsListQ.data.bSideFriends[bIdx].createdAt)
           ),
-          buttons,
+          buttons: [
+            {
+              icon: <BsPersonX color={'#f00'} />,
+              text: 'Unfriend',
+              onClick: () => {
+                onUnfriendClicked({
+                  playerId1: playerId,
+                  playerId2: id
+                });
+              }
+            }
+          ],
           buttonsAsPopover: true
         });
         bIdx++;

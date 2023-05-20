@@ -3,4 +3,12 @@ export type FriendActionData = {
   createdAt: string;
 };
 
-export type FriendActionClickedCallback = (data: FriendActionData) => void;
+export type FriendRequestActionData = {
+  requesterId: string;
+  addresseeId: string;
+};
+
+export type UnfriendActionData = {
+  playerId1: string;
+  playerId2: string;
+};

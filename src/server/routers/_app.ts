@@ -13,7 +13,11 @@ import {
   getFriendsList,
   acceptFriendRequest,
   rejectFriendRequest,
-  friendRequestExists
+  friendRequestExists,
+  findFriends,
+  createFriendRequest,
+  deleteFriendRequest,
+  deleteFriend
 } from '@/src/lib/db-helper';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
@@ -109,6 +113,36 @@ export const appRouter = router({
     .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
     .mutation((opts) =>
       rejectFriendRequest(opts.input.requesterId, opts.input.addresseeId)
+    ),
+  findFriends: procedure
+    .input(
+      z.object({
+        requesterId: z.string(),
+        searchText: z.string(),
+        limit: z.number().optional()
+      })
+    )
+    .query((opts) =>
+      findFriends(
+        opts.input.requesterId,
+        opts.input.searchText,
+        opts.input.limit
+      )
+    ),
+  createFriendRequest: procedure
+    .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
+    .mutation((opts) =>
+      createFriendRequest(opts.input.requesterId, opts.input.addresseeId)
+    ),
+  deleteFriendRequest: procedure
+    .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
+    .mutation((opts) =>
+      deleteFriendRequest(opts.input.requesterId, opts.input.addresseeId)
+    ),
+  deleteFriend: procedure
+    .input(z.object({ playerId1: z.string(), playerId2: z.string() }))
+    .mutation((opts) =>
+      deleteFriend(opts.input.playerId1, opts.input.playerId2)
     )
 });
 

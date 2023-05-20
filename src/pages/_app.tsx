@@ -7,14 +7,15 @@ import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 import { trpc } from '../utils/trpc';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
-  const { definePartsStyle, defineMultiStyleConfig } =
-    createMultiStyleConfigHelpers(tabsAnatomy.keys);
-  const baseStyle = definePartsStyle({
+  const configHelperTab = createMultiStyleConfigHelpers(tabsAnatomy.keys);
+  const baseStyleTab = configHelperTab.definePartsStyle({
     tab: {
       fontWeight: 'semibold'
     }
   });
-  const tabsTheme = defineMultiStyleConfig({ baseStyle });
+  const tabsTheme = configHelperTab.defineMultiStyleConfig({
+    baseStyle: baseStyleTab
+  });
 
   const extendedTheme = extendTheme({
     components: {

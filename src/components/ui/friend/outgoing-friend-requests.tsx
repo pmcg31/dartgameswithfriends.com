@@ -1,3 +1,4 @@
+import { FriendRequestActionData } from '@/src/lib/friend-types';
 import { trpc } from '@/src/utils/trpc';
 import { formatRelative } from 'date-fns';
 import React from 'react';
@@ -5,9 +6,11 @@ import { BsPersonSlash } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
 
 export default function OutgoingFriendRequests({
-  playerId
+  playerId,
+  onCancelClicked
 }: {
   playerId: string;
+  onCancelClicked: (data: FriendRequestActionData) => void;
 }): JSX.Element {
   // Get query for outgoing friend requests for
   // the specified player id
@@ -27,7 +30,10 @@ export default function OutgoingFriendRequests({
             icon: <BsPersonSlash color={'#f00'} />,
             text: 'Cancel',
             onClick: () => {
-              console.log('cancel friend request clicked');
+              onCancelClicked({
+                requesterId: playerId,
+                addresseeId
+              });
             }
           }
         ],

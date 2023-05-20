@@ -9,7 +9,7 @@ import {
   DeleteNotificationClickedCallback,
   FriendRequestNotificationData
 } from '@/src/lib/notification-types';
-import { FriendActionClickedCallback } from '@/src/lib/friend-types';
+import { FriendActionData } from '@/src/lib/friend-types';
 import { CSSProperties } from 'react';
 
 export default function FriendRequestNotification({
@@ -33,9 +33,9 @@ export default function FriendRequestNotification({
   createdAt: Date;
   data: FriendRequestNotificationData & { userId: string };
   style?: CSSProperties;
-  onAcceptClicked: FriendActionClickedCallback;
-  onRejectClicked: FriendActionClickedCallback;
-  onBlockClicked: FriendActionClickedCallback;
+  onAcceptClicked: (data: FriendActionData) => void;
+  onRejectClicked: (data: FriendActionData) => void;
+  onBlockClicked: (data: FriendActionData) => void;
   onToggleReadClicked: ToggleNotificationReadClickedCallback;
   onDeleteClicked: DeleteNotificationClickedCallback;
 }): JSX.Element | null {
