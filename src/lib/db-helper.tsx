@@ -158,6 +158,17 @@ export async function acceptFriendRequest(
       where: { requesterId_addresseeId: { requesterId, addresseeId } }
     });
 
+    // Blindly delete a request coming the other
+    // way in case it exists
+    await prisma.friendshipRequest.delete({
+      where: {
+        requesterId_addresseeId: {
+          requesterId: addresseeId,
+          addresseeId: requesterId
+        }
+      }
+    });
+
     // Get addressee handle
     const addresseePlayer = await prisma.player.findUnique({
       where: { id: addresseeId },
