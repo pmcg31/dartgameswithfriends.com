@@ -1,5 +1,12 @@
 import Layout from '@/src/components/ui/layout/layout';
-import { Flex } from '@chakra-ui/react';
+import {
+  Flex,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel
+} from '@chakra-ui/react';
 import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
 import { BsPeople } from 'react-icons/bs';
 import { trpc } from '@/src/utils/trpc';
@@ -34,65 +41,83 @@ export default function Friends() {
           gap={'1rem'}
         >
           <PageHeading icon={<BsPeople />} heading='Friends' />
-          <IncomingFriendRequests
-            playerId={user.id}
-            onAcceptClicked={(data) => {
-              acceptFriendRequestM.mutate(
-                {
-                  requesterId: data.requesterId,
-                  addresseeId: user.id
-                },
-                {
-                  onError: () => {
-                    toast({
-                      description:
-                        'Oops! Something went wrong and your friend request could not be accepted'
-                    });
-                  },
-                  onSuccess: () => {
-                    // Invalidate any queries that could
-                    // be affected by this update
-                    utils.getNotifications.invalidate();
-                    utils.getNewNotificationCount.invalidate();
-                    utils.getNotificationCount.invalidate();
-                    utils.getFriendsList.invalidate();
-                    utils.getIncomingFriendRequests.invalidate();
-                    utils.getOutgoingFriendRequests.invalidate();
-                  }
-                }
-              );
-            }}
-            onRejectClicked={(data) => {
-              rejectFriendRequestM.mutate(
-                {
-                  requesterId: data.requesterId,
-                  addresseeId: user.id
-                },
-                {
-                  onError: () => {
-                    toast({
-                      description:
-                        'Oops! Something went wrong and your friend request could not be rejected'
-                    });
-                  },
-                  onSuccess: () => {
-                    // Invalidate any queries that could
-                    // be affected by this update
-                    utils.getNotifications.invalidate();
-                    utils.getNewNotificationCount.invalidate();
-                    utils.getNotificationCount.invalidate();
-                    utils.getIncomingFriendRequests.invalidate();
-                    utils.getOutgoingFriendRequests.invalidate();
-                  }
-                }
-              );
-            }}
-            onBlockClicked={(data) => {
-              console.log(`block clicked: data is: ${JSON.stringify(data)}`);
-            }}
-          />
-          <OutgoingFriendRequests playerId={user.id} />
-          <FriendsList playerId={user.id} />
+          <Tabs variant={'line'} size={'sm'}>
+            <TabList>
+              <Tab>Incoming Requests</Tab>
+              <Tab>Outgoing Requests</Tab>
+              <Tab>Friend List</Tab>
+              <Tab>Find Friends</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <IncomingFriendRequests
+                  playerId={user.id}
+                  onAcceptClicked={(data) => {
+                    acceptFriendRequestM.mutate(
+                      {
+                        requesterId: data.requesterId,
+                        addresseeId: user.id
+                      },
+                      {
+                        onError: () => {
+                          toast({
+                            description:
+                              'Oops! Something went wrong and your friend request could not be accepted'
+                          });
+                        },
+                        onSuccess: () => {
+                          // Invalidate any queries that could
+                          // be affected by this update
+                          utils.getNotifications.invalidate();
+                          utils.getNewNotificationCount.invalidate();
+                          utils.getNotificationCount.invalidate();
+                          utils.getFriendsList.invalidate();
+                          utils.getIncomingFriendRequests.invalidate();
+                          utils.getOutgoingFriendRequests.invalidate();
+                        }
+                      }
+                    );
+                  }}
+                  onRejectClicked={(data) => {
+                    rejectFriendRequestM.mutate(
+                      {
+                        requesterId: data.requesterId,
+                        addresseeId: user.id
+                      },
+                      {
+                        onError: () => {
+                          toast({
+                            description:
+                              'Oops! Something went wrong and your friend request could not be rejected'
+                          });
+                        },
+                        onSuccess: () => {
+                          // Invalidate any queries that could
+                          // be affected by this update
+                          utils.getNotifications.invalidate();
+                          utils.getNewNotificationCount.invalidate();
+                          utils.getNotificationCount.invalidate();
+                          utils.getIncomingFriendRequests.invalidate();
+                          utils.getOutgoingFriendRequests.invalidate();
+                        }
+                      }
+                    );
+                  }}
+                  onBlockClicked={(data) => {
+                    console.log(
+                      `block clicked: data is: ${JSON.stringify(data)}`
+                    );
+                  }}
+                />
+              </TabPanel>
+              <TabPanel>
+                <OutgoingFriendRequests playerId={user.id} />
+              </TabPanel>
+              <TabPanel>
+                <FriendsList playerId={user.id} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Flex>
       );
     } else {

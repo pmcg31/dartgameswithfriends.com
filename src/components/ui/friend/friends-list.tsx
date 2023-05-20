@@ -108,7 +108,6 @@ export default function FriendsList({
 
   return (
     <FriendCard
-      heading={'Friends List'}
       dataIsGood={friendsListQ.isSuccess}
       data={data}
       emptyText={'No friends'}

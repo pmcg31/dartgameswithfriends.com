@@ -67,7 +67,6 @@ export default function IncomingFriendRequests({
 
   return (
     <FriendCard
-      heading={'Incoming Requests'}
       dataIsGood={friendRequestsQ.isSuccess}
       data={data}
       emptyText={'No pending requests'}
