@@ -142,7 +142,7 @@ export default function Layout({
         templateRows={'auto 1fr auto'}
         templateAreas={`
         'header header header'
-        'left content right'
+        'content content content'
         'footer footer footer'
       `}
         backgroundColor={'var(--brand-color)'}
