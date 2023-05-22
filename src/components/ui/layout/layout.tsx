@@ -27,6 +27,7 @@ import LayoutHeader from './layout-header';
 import { useUser } from '@clerk/nextjs';
 import { PropsWithChildren, useEffect } from 'react';
 import { trpc } from '@/src/utils/trpc';
+// import { WsQueryTrackerContext } from '@/src/lib/websocket/ws-query-tracker-context';
 
 export default function Layout({
   title,
@@ -36,6 +37,8 @@ export default function Layout({
   title: string;
   hideSignIn?: boolean;
 }>): JSX.Element {
+  // const { connState, trackQuery } = useContext(WsQueryTrackerContext);
+
   // Use clerk user
   const { isLoaded, isSignedIn, user } = useUser();
 

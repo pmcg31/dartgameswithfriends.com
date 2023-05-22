@@ -15,9 +15,23 @@ import FriendsList from '@/src/components/ui/friend/friends-list';
 import IncomingFriendRequests from '@/src/components/ui/friend/incoming-friend-requests';
 import OutgoingFriendRequests from '@/src/components/ui/friend/outgoing-friend-requests';
 import { useToast } from '@chakra-ui/react';
-import FindFriends from '../components/ui/friend/find-friends';
+import FindFriends from '@/src/components/ui/friend/find-friends';
+import { useWebsocket } from '@/src/lib/websocket/use-websocket';
+import {
+  TrackQueryData,
+  WsQueryTrackerContext
+} from '@/src/lib/websocket/ws-query-tracker-context';
 
 export default function Friends() {
+  // Use the websocket
+  const { connState, sendData } = useWebsocket({
+    socketUrl:
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3000/ws',
+    onData: (data) => {
+      console.log(`ws data: ${JSON.stringify(data, null, 2)}`);
+    }
+  });
+
   const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
 
@@ -33,6 +47,12 @@ export default function Friends() {
 
   // Get trpc utils
   const utils = trpc.useContext();
+
+  function trackQuery(data: TrackQueryData) {
+    if (connState === 'CONNECTED') {
+      sendData({ trackQuery: data });
+    }
+  }
 
   let content: JSX.Element | null = null;
   if (isLoaded) {
@@ -236,5 +256,9 @@ export default function Friends() {
     }
   }
 
-  return <Layout title='Friends'>{content}</Layout>;
+  return (
+    <WsQueryTrackerContext.Provider value={{ connState, trackQuery }}>
+      <Layout title='Friends'>{content}</Layout>;
+    </WsQueryTrackerContext.Provider>
+  );
 }
