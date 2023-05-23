@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 export type ConnState = 'DISCONNECTED' | 'CONNECTING' | 'CONNECTED';
 
@@ -8,6 +8,8 @@ export type UseWebsocketData = {
 };
 
 // socketUrl: the websocket URL to connect to
+// onOpen: called when connection to server
+//         established
 // onData: called when data is received; arg is
 //         parsed JSON message payload
 //
@@ -20,23 +22,28 @@ export type UseWebsocketData = {
 //             connected
 export function useWebsocket({
   socketUrl,
+  onOpen,
   onData
 }: {
   socketUrl: string;
-  onData: (data: object) => void;
+  onOpen?: () => void;
+  onData?: (data: object) => void;
 }): UseWebsocketData {
   const [connState, setConnState] = useState<ConnState>('DISCONNECTED');
   const ws = useRef<WebSocket | null>(null);
 
   // Stringify and send data to websocket
-  function sendData(data: object): boolean {
-    if (ws.current && ws.current.readyState === ws.current.OPEN) {
-      ws.current.send(JSON.stringify(data));
-      return true;
-    }
+  const sendData = useCallback(
+    (data: object): boolean => {
+      if (ws.current && connState === 'CONNECTED') {
+        ws.current.send(JSON.stringify(data));
+        return true;
+      }
 
-    return false;
-  }
+      return false;
+    },
+    [connState]
+  );
 
   useEffect(() => {
     // Connect if disconnected
@@ -51,11 +58,17 @@ export function useWebsocket({
       ws.current.onopen = () => {
         // Socket is connected
         setConnState('CONNECTED');
+
+        if (onOpen) {
+          onOpen();
+        }
       };
 
       // Called on incoming data
       ws.current.onmessage = (data) => {
-        onData(JSON.parse(data.data));
+        if (onData) {
+          onData(JSON.parse(data.data));
+        }
       };
 
       // Called when socket disconnects

@@ -4,15 +4,21 @@ import {
   TrackQueryData,
   WsQueryTrackerContext
 } from '@/src/lib/websocket/ws-query-tracker-context';
-import { PropsWithChildren, useEffect, useRef } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
+import { useUser } from '@clerk/clerk-react';
 
 export default function WsQueryTrackerProvider({
   children
 }: PropsWithChildren): JSX.Element {
+  const { isLoaded, isSignedIn, user } = useUser();
+
   // Use the websocket
   const { connState, sendData } = useWebsocket({
     socketUrl:
       process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3000/ws',
+    onOpen: () => {
+      return;
+    },
     onData: (/*data*/) => {
       // console.log(`ws data: ${JSON.stringify(data, null, 2)}`);
       return;
@@ -28,35 +34,54 @@ export default function WsQueryTrackerProvider({
   // Function provided by websocket query
   // tracker context; sends data on queries
   // currently in use to the ws server
-  function usingQuery(data: TrackQueryData) {
-    if (connState === 'CONNECTED') {
-      sendData({ usingQuery: data });
-    } else {
-      usedQueries.current.push(data);
-    }
-  }
+  const usingQuery = useCallback(
+    (data: TrackQueryData) => {
+      if (connState === 'CONNECTED') {
+        sendData({ usingQuery: data });
+      } else {
+        usedQueries.current.push(data);
+      }
+    },
+    [connState, sendData]
+  );
 
   // Function provided by websocket query
   // tracker context; sends data on queries
   // no longer being used to the ws server
-  function releaseQuery(data: TrackQueryData) {
-    if (connState === 'CONNECTED') {
-      sendData({ releaseQuery: data });
-    } else {
-      releasedQueries.current.push(data);
-    }
-  }
+  const releaseQuery = useCallback(
+    (data: TrackQueryData) => {
+      if (connState === 'CONNECTED') {
+        sendData({ releaseQuery: data });
+      } else {
+        releasedQueries.current.push(data);
+      }
+    },
+    [connState, sendData]
+  );
 
   // Function provided by websocket query
   // tracker context; sends data on mutations used
   // to the ws server
-  function announceMutation(data: TrackMutationData) {
+  const announceMutation = useCallback(
+    (data: TrackMutationData) => {
+      if (connState === 'CONNECTED') {
+        sendData({ mutation: data });
+      } else {
+        announcedMutations.current.push(data);
+      }
+    },
+    [connState, sendData]
+  );
+
+  useEffect(() => {
     if (connState === 'CONNECTED') {
-      sendData({ mutation: data });
-    } else {
-      announcedMutations.current.push(data);
+      if (isLoaded && isSignedIn) {
+        sendData({ currentUser: user.id });
+      } else {
+        sendData({ currentUser: null });
+      }
     }
-  }
+  }, [connState, sendData, isLoaded, isSignedIn, user]);
 
   // Handle sending any data to the websocket that
   // has accumulated while it was connecting
