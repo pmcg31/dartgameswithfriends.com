@@ -5,6 +5,7 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { tabsAnatomy } from '@chakra-ui/anatomy';
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 import { trpc } from '../utils/trpc';
+import WsQueryTrackerProvider from '../components/utility/ws-query-tracker-provider';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const configHelperTab = createMultiStyleConfigHelpers(tabsAnatomy.keys);
@@ -31,7 +32,9 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
     <ClerkProvider {...pageProps}>
       <ChakraProvider theme={extendedTheme}>
-        <Component {...pageProps} />
+        <WsQueryTrackerProvider>
+          <Component {...pageProps} />
+        </WsQueryTrackerProvider>
       </ChakraProvider>
     </ClerkProvider>
   );

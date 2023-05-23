@@ -1,11 +1,10 @@
 import { trpc } from '@/src/utils/trpc';
-import React, { useContext, useEffect } from 'react';
 import { formatRelative } from 'date-fns';
 import { BsPersonCheck, BsPersonDash } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
 import { FaRegHandPaper } from 'react-icons/fa';
 import { FriendActionData } from '@/src/lib/friend-types';
-import { WsQueryTrackerContext } from '@/src/lib/websocket/ws-query-tracker-context';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function IncomingFriendRequests({
   playerId,
@@ -18,7 +17,8 @@ export default function IncomingFriendRequests({
   onRejectClicked: (data: FriendActionData) => void;
   onBlockClicked: (data: FriendActionData) => void;
 }): JSX.Element {
-  const { connState, trackQuery } = useContext(WsQueryTrackerContext);
+  // Use the websocket query tracker
+  const { usingQuery } = useWsQueryTracker();
 
   // Get query for incoming friend requests for
   // the specified player id
@@ -26,11 +26,12 @@ export default function IncomingFriendRequests({
     playerId: playerId
   });
 
-  useEffect(() => {
-    if (connState === 'CONNECTED') {
-      trackQuery({ getIncomingFriendRequests: { playerId } });
+  // Inform tracker we're using the query
+  usingQuery({
+    getIncomingFriendRequests: {
+      playerId
     }
-  }, [connState, trackQuery, playerId]);
+  });
 
   // Transform trpc data into friend card data
   let data: FriendCardData[] = [];
@@ -44,7 +45,6 @@ export default function IncomingFriendRequests({
             icon: <BsPersonCheck color={'#0f0'} />,
             text: 'Accept',
             onClick: () => {
-              console.log(`ifr accept clicked: requesterId: ${requesterId}`);
               onAcceptClicked({
                 requesterId,
                 createdAt

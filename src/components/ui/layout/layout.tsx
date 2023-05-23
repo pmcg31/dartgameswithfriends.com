@@ -27,7 +27,7 @@ import LayoutHeader from './layout-header';
 import { useUser } from '@clerk/nextjs';
 import { PropsWithChildren, useEffect } from 'react';
 import { trpc } from '@/src/utils/trpc';
-// import { WsQueryTrackerContext } from '@/src/lib/websocket/ws-query-tracker-context';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function Layout({
   title,
@@ -37,7 +37,8 @@ export default function Layout({
   title: string;
   hideSignIn?: boolean;
 }>): JSX.Element {
-  // const { connState, trackQuery } = useContext(WsQueryTrackerContext);
+  // Use the websocket query tracker
+  const { usingQuery, announceMutation } = useWsQueryTracker();
 
   // Use clerk user
   const { isLoaded, isSignedIn, user } = useUser();
@@ -49,6 +50,15 @@ export default function Layout({
       enabled: isLoaded && isSignedIn
     }
   );
+
+  // Notify tracker about query
+  if (isLoaded && isSignedIn) {
+    usingQuery({
+      getPlayer: {
+        id: user.id
+      }
+    });
+  }
 
   // Create player mutation
   const createPlayerMutation = trpc.createPlayer.useMutation();
@@ -79,6 +89,14 @@ export default function Layout({
                 console.log(`Create player error: ${JSON.stringify(error)}`);
               },
               onSuccess: () => {
+                // Announce the mutation
+                announceMutation({
+                  createPlayer: {
+                    id: user.id
+                  }
+                });
+
+                // Refresh getPlayer query
                 utils.getPlayer.invalidate();
               }
             }
@@ -117,6 +135,10 @@ export default function Layout({
                   console.log(`Update player error: ${JSON.stringify(error)}`);
                 },
                 onSuccess: () => {
+                  // Announce the mutation
+                  announceMutation({
+                    updatePlayer: { id: user.id }
+                  });
                   utils.getPlayer.invalidate();
                 }
               }

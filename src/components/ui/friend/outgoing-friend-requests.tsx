@@ -1,10 +1,9 @@
 import { FriendRequestActionData } from '@/src/lib/friend-types';
 import { trpc } from '@/src/utils/trpc';
 import { formatRelative } from 'date-fns';
-import React, { useContext, useEffect } from 'react';
 import { BsPersonSlash } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
-import { WsQueryTrackerContext } from '@/src/lib/websocket/ws-query-tracker-context';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function OutgoingFriendRequests({
   playerId,
@@ -13,7 +12,8 @@ export default function OutgoingFriendRequests({
   playerId: string;
   onCancelClicked: (data: FriendRequestActionData) => void;
 }): JSX.Element {
-  const { connState, trackQuery } = useContext(WsQueryTrackerContext);
+  // Use the websocket query tracker
+  const { usingQuery } = useWsQueryTracker();
 
   // Get query for outgoing friend requests for
   // the specified player id
@@ -21,11 +21,12 @@ export default function OutgoingFriendRequests({
     playerId: playerId
   });
 
-  useEffect(() => {
-    if (connState === 'CONNECTED') {
-      trackQuery({ getOutgoingFriendRequests: { playerId } });
+  // Inform tracker we're using the query
+  usingQuery({
+    getOutgoingFriendRequests: {
+      playerId
     }
-  }, [connState, trackQuery, playerId]);
+  });
 
   // Transform trpc data into friend card data
   let data: FriendCardData[] = [];

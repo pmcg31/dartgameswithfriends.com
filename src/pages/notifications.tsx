@@ -13,8 +13,12 @@ import {
   ToggleNotificationReadData
 } from '../lib/notification-types';
 import { FriendActionData } from '../lib/friend-types';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function Notifications() {
+  // Use the websocket query tracker
+  const { usingQuery, announceMutation } = useWsQueryTracker();
+
   const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
 
@@ -23,6 +27,15 @@ export default function Notifications() {
     { playerId: user ? user.id : '', limit: 10 },
     { enabled: isLoaded && isSignedIn }
   );
+
+  // Inform tracker we're using the query
+  if (isLoaded && isSignedIn) {
+    usingQuery({
+      getNotifications: {
+        playerId: user.id
+      }
+    });
+  }
 
   // Set up mutations for accept/reject
   // friend request
@@ -36,7 +49,7 @@ export default function Notifications() {
   const notificationUpdateNewM = trpc.notificationUpdateNew.useMutation();
 
   // Get trpc context
-  const trpcContext = trpc.useContext();
+  const utils = trpc.useContext();
 
   function acceptRequest(data: FriendActionData & { addresseeId: string }) {
     acceptFriendRequestM.mutate(
@@ -52,14 +65,22 @@ export default function Notifications() {
           });
         },
         onSuccess: () => {
+          // Announce the mutation
+          announceMutation({
+            acceptFriendRequest: {
+              requesterId: data.requesterId,
+              addresseeId: data.addresseeId
+            }
+          });
+
           // Invalidate any queries that could
           // be affected by this update
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
-          trpcContext.getNotificationCount.invalidate();
-          trpcContext.getFriendsList.invalidate();
-          trpcContext.getIncomingFriendRequests.invalidate();
-          trpcContext.getOutgoingFriendRequests.invalidate();
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+          utils.getNotificationCount.invalidate();
+          utils.getFriendsList.invalidate();
+          utils.getIncomingFriendRequests.invalidate();
+          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -79,13 +100,21 @@ export default function Notifications() {
           });
         },
         onSuccess: () => {
+          // Announce the mutation
+          announceMutation({
+            rejectFriendRequest: {
+              requesterId: data.requesterId,
+              addresseeId: data.addresseeId
+            }
+          });
+
           // Invalidate any queries that could
           // be affected by this update
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
-          trpcContext.getNotificationCount.invalidate();
-          trpcContext.getIncomingFriendRequests.invalidate();
-          trpcContext.getOutgoingFriendRequests.invalidate();
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+          utils.getNotificationCount.invalidate();
+          utils.getIncomingFriendRequests.invalidate();
+          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -99,8 +128,15 @@ export default function Notifications() {
       },
       {
         onSuccess: () => {
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
+          // Announce the mutation
+          announceMutation({
+            notificationUpdateNew: {
+              notificationId
+            }
+          });
+
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
         }
       }
     );
@@ -117,9 +153,16 @@ export default function Notifications() {
       },
       {
         onSuccess: () => {
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
-          trpcContext.getNotificationCount.invalidate();
+          // Announce the mutation
+          announceMutation({
+            deleteNotification: {
+              notificationId: data.notificationId
+            }
+          });
+
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+          utils.getNotificationCount.invalidate();
         }
       }
     );

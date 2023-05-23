@@ -1,9 +1,9 @@
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 import { trpc } from '@/src/utils/trpc';
 import { Avatar, HStack, Text, VStack } from '@chakra-ui/react';
-import { CSSProperties, useContext, useEffect } from 'react';
+import { CSSProperties } from 'react';
 import { IconContext } from 'react-icons';
 import { BsPerson } from 'react-icons/bs';
-import { WsQueryTrackerContext } from '@/src/lib/websocket/ws-query-tracker-context';
 
 export default function Player({
   playerId,
@@ -16,7 +16,9 @@ export default function Player({
   addedText?: string;
   sx?: CSSProperties;
 }): JSX.Element {
-  const { connState, trackQuery } = useContext(WsQueryTrackerContext);
+  // Use the websocket query tracker
+  const { usingQuery } = useWsQueryTracker();
+
   const getPlayerQ = trpc.getPlayer.useQuery({ id: playerId });
   let fontSize = 'lg';
   let addedTextFontSize = 'sm';
@@ -34,11 +36,12 @@ export default function Player({
     addedTextFontSize = 'md';
   }
 
-  useEffect(() => {
-    if (connState === 'CONNECTED') {
-      trackQuery({ getPlayer: { id: playerId } });
+  // Inform tracker we're using the query
+  usingQuery({
+    getPlayer: {
+      id: playerId
     }
-  }, [connState, trackQuery, playerId]);
+  });
 
   return (
     <HStack sx={sx}>

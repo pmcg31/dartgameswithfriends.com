@@ -1,10 +1,10 @@
 import { FriendRequestActionData } from '@/src/lib/friend-types';
 import { trpc } from '@/src/utils/trpc';
 import { Grid, Input } from '@chakra-ui/react';
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BsPersonPlus } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
-import { WsQueryTrackerContext } from '@/src/lib/websocket/ws-query-tracker-context';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function FindFriends({
   playerId,
@@ -15,7 +15,8 @@ export default function FindFriends({
   limit?: number;
   onAddFriendClicked: (data: FriendRequestActionData) => void;
 }): JSX.Element {
-  const { connState, trackQuery } = useContext(WsQueryTrackerContext);
+  // Use the websocket query tracker
+  const { usingQuery } = useWsQueryTracker();
 
   const [searchText, setSearchText] = useState<string>('');
 
@@ -30,11 +31,8 @@ export default function FindFriends({
     searchText
   });
 
-  useEffect(() => {
-    if (connState === 'CONNECTED') {
-      trackQuery({ findFriends: true });
-    }
-  }, [connState, trackQuery, playerId]);
+  // Inform tracker we're using the query
+  usingQuery({ findFriends: true });
 
   // Transform trpc data into friend card data
   let data: FriendCardData[] = [];

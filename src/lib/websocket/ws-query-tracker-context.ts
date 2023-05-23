@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-import { ConnState } from './use-websocket';
 
 export type TrackQueryData = {
   getPlayer?: { id: string };
@@ -13,12 +12,31 @@ export type TrackQueryData = {
   findFriends?: boolean;
 };
 
+export type TrackMutationData = {
+  createPlayer?: { id: string };
+  updatePlayer?: { id: string };
+  deletePlayer?: { id: string };
+  deleteNotification?: { notificationId: number };
+  notificationUpdateNew?: { notificationId: number };
+  acceptFriendRequest?: { requesterId: string; addresseeId: string };
+  rejectFriendRequest?: { requesterId: string; addresseeId: string };
+  createFriendRequest?: { requesterId: string; addresseeId: string };
+  deleteFriendRequest?: { requesterId: string; addresseeId: string };
+  deleteFriend?: { playerId1: string; playerId2: string };
+};
+
 export const WsQueryTrackerContext = createContext<{
-  connState: ConnState;
-  trackQuery: (data: TrackQueryData) => void;
+  usingQuery: (data: TrackQueryData) => void;
+  releaseQuery: (data: TrackQueryData) => void;
+  announceMutation: (data: TrackMutationData) => void;
 }>({
-  connState: 'DISCONNECTED',
-  trackQuery: () => {
+  usingQuery: () => {
+    return;
+  },
+  releaseQuery: () => {
+    return;
+  },
+  announceMutation: () => {
     return;
   }
 });

@@ -16,21 +16,11 @@ import IncomingFriendRequests from '@/src/components/ui/friend/incoming-friend-r
 import OutgoingFriendRequests from '@/src/components/ui/friend/outgoing-friend-requests';
 import { useToast } from '@chakra-ui/react';
 import FindFriends from '@/src/components/ui/friend/find-friends';
-import { useWebsocket } from '@/src/lib/websocket/use-websocket';
-import {
-  TrackQueryData,
-  WsQueryTrackerContext
-} from '@/src/lib/websocket/ws-query-tracker-context';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function Friends() {
-  // Use the websocket
-  const { connState, sendData } = useWebsocket({
-    socketUrl:
-      process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3000/ws',
-    onData: (data) => {
-      console.log(`ws data: ${JSON.stringify(data, null, 2)}`);
-    }
-  });
+  // Use the websocket query tracker
+  const { announceMutation } = useWsQueryTracker();
 
   const toast = useToast();
   const { isLoaded, isSignedIn, user } = useUser();
@@ -47,12 +37,6 @@ export default function Friends() {
 
   // Get trpc utils
   const utils = trpc.useContext();
-
-  function trackQuery(data: TrackQueryData) {
-    if (connState === 'CONNECTED') {
-      sendData({ trackQuery: data });
-    }
-  }
 
   let content: JSX.Element | null = null;
   if (isLoaded) {
@@ -96,6 +80,11 @@ export default function Friends() {
                             description: 'Your friend has been removed'
                           });
 
+                          // Announce the mutation
+                          announceMutation({
+                            deleteFriend: { playerId1, playerId2 }
+                          });
+
                           // Invalidate any queries that could
                           // be affected by this update
                           utils.findFriends.invalidate();
@@ -123,6 +112,14 @@ export default function Friends() {
                           });
                         },
                         onSuccess: () => {
+                          // Announce the mutation
+                          announceMutation({
+                            acceptFriendRequest: {
+                              requesterId: data.requesterId,
+                              addresseeId: user.id
+                            }
+                          });
+
                           // Invalidate any queries that could
                           // be affected by this update
                           utils.getNotifications.invalidate();
@@ -153,6 +150,14 @@ export default function Friends() {
                           });
                         },
                         onSuccess: () => {
+                          // Announce the mutation
+                          announceMutation({
+                            rejectFriendRequest: {
+                              requesterId: data.requesterId,
+                              addresseeId: user.id
+                            }
+                          });
+
                           // Invalidate any queries that could
                           // be affected by this update
                           utils.getNotifications.invalidate();
@@ -192,6 +197,14 @@ export default function Friends() {
                             description: 'Your friend request has been canceled'
                           });
 
+                          // Announce the mutation
+                          announceMutation({
+                            deleteFriendRequest: {
+                              requesterId,
+                              addresseeId
+                            }
+                          });
+
                           // Invalidate any queries that could
                           // be affected by this update
                           utils.friendRequestExists.invalidate();
@@ -226,6 +239,14 @@ export default function Friends() {
                             description: 'Your friend request has been sent!'
                           });
 
+                          // Announce the mutation
+                          announceMutation({
+                            createFriendRequest: {
+                              requesterId,
+                              addresseeId
+                            }
+                          });
+
                           // Invalidate any queries that could
                           // be affected by this update
                           utils.findFriends.invalidate();
@@ -235,6 +256,12 @@ export default function Friends() {
                           utils.getNewNotificationCount.invalidate();
                           utils.getNotificationCount.invalidate();
                           utils.getNotifications.invalidate();
+
+                          // Inform the ws server that an update has
+                          // been made
+                          announceMutation({
+                            createFriendRequest: { requesterId, addresseeId }
+                          });
                         }
                       }
                     );
@@ -256,9 +283,5 @@ export default function Friends() {
     }
   }
 
-  return (
-    <WsQueryTrackerContext.Provider value={{ connState, trackQuery }}>
-      <Layout title='Friends'>{content}</Layout>;
-    </WsQueryTrackerContext.Provider>
-  );
+  return <Layout title='Friends'>{content}</Layout>;
 }

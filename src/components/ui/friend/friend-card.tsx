@@ -79,6 +79,7 @@ export default function FriendCard({
                           border={'2px solid #888'}
                           width={'auto'}
                           p={'0.5rem'}
+                          m={0}
                         >
                           <Stack direction={'column'} height={'100%'}>
                             {buttons.map((buttonData) => {

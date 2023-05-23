@@ -11,6 +11,7 @@ import {
 } from '@/src/lib/notification-types';
 import { FriendActionData } from '@/src/lib/friend-types';
 import { CSSProperties } from 'react';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function FriendRequestNotification({
   variant,
@@ -39,6 +40,9 @@ export default function FriendRequestNotification({
   onToggleReadClicked: ToggleNotificationReadClickedCallback;
   onDeleteClicked: DeleteNotificationClickedCallback;
 }): JSX.Element | null {
+  // Use the websocket query tracker
+  const { usingQuery } = useWsQueryTracker();
+
   // Set up player query
   const getPlayerQ = trpc.getPlayer.useQuery({ id: data.from });
 
@@ -46,6 +50,11 @@ export default function FriendRequestNotification({
   const friendRequestExistsQ = trpc.friendRequestExists.useQuery({
     requesterId: data.from,
     addresseeId: data.userId
+  });
+
+  // Inform tracker we're using the query
+  usingQuery({
+    friendRequestExists: { requesterId: data.from, addresseeId: data.userId }
   });
 
   if (variant === 'popover') {

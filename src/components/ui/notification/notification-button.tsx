@@ -25,8 +25,12 @@ import {
 } from '@/src/lib/notification-types';
 import { useToast } from '@chakra-ui/react';
 import { FriendActionData } from '@/src/lib/friend-types';
+import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 
 export default function NotificationButton() {
+  // Use the websocket query tracker
+  const { usingQuery, announceMutation } = useWsQueryTracker();
+
   const toast = useToast();
 
   const router = useRouter();
@@ -43,17 +47,42 @@ export default function NotificationButton() {
     { enabled: isLoaded && isSignedIn }
   );
 
+  // Inform tracker we're using the query
+  if (isLoaded && isSignedIn) {
+    usingQuery({
+      getNewNotificationCount: {
+        playerId: user.id
+      }
+    });
+  }
+
   // Set up query for notification count for logged in user
   const notifyCountQ = trpc.getNotificationCount.useQuery(
     { playerId: user ? user.id : '' },
     { enabled: isLoaded && isSignedIn }
   );
 
+  if (isLoaded && isSignedIn) {
+    usingQuery({
+      getNotificationCount: {
+        playerId: user.id
+      }
+    });
+  }
+
   // Set up query for notifications for logged in user
   const notificationsQ = trpc.getNotifications.useQuery(
     { playerId: user ? user.id : '', limit: maxNotifications },
     { enabled: isLoaded && isSignedIn }
   );
+
+  if (isLoaded && isSignedIn) {
+    usingQuery({
+      getNotifications: {
+        playerId: user.id
+      }
+    });
+  }
 
   // Set up mutation for deleting a notification
   const deleteNotificationM = trpc.deleteNotification.useMutation();
@@ -83,6 +112,14 @@ export default function NotificationButton() {
           });
         },
         onSuccess: () => {
+          // Announce the mutation
+          announceMutation({
+            acceptFriendRequest: {
+              requesterId: data.requesterId,
+              addresseeId: data.addresseeId
+            }
+          });
+
           // Invalidate any queries that could
           // be affected by this update
           trpcContext.getNotifications.invalidate();
@@ -110,6 +147,14 @@ export default function NotificationButton() {
           });
         },
         onSuccess: () => {
+          // Announce the mutation
+          announceMutation({
+            rejectFriendRequest: {
+              requesterId: data.requesterId,
+              addresseeId: data.addresseeId
+            }
+          });
+
           // Invalidate any queries that could
           // be affected by this update
           trpcContext.getNotifications.invalidate();
@@ -130,6 +175,9 @@ export default function NotificationButton() {
       },
       {
         onSuccess: () => {
+          // Announce the mutation
+          announceMutation({ notificationUpdateNew: { notificationId } });
+
           trpcContext.getNotifications.invalidate();
           trpcContext.getNewNotificationCount.invalidate();
         }
@@ -148,6 +196,11 @@ export default function NotificationButton() {
       },
       {
         onSuccess: () => {
+          // Announce the mutation
+          announceMutation({
+            deleteNotification: { notificationId: data.notificationId }
+          });
+
           trpcContext.getNotifications.invalidate();
           trpcContext.getNewNotificationCount.invalidate();
           trpcContext.getNotificationCount.invalidate();
