@@ -256,12 +256,6 @@ export default function Friends() {
                           utils.getNewNotificationCount.invalidate();
                           utils.getNotificationCount.invalidate();
                           utils.getNotifications.invalidate();
-
-                          // Inform the ws server that an update has
-                          // been made
-                          announceMutation({
-                            createFriendRequest: { requesterId, addresseeId }
-                          });
                         }
                       }
                     );

@@ -96,7 +96,7 @@ export default function NotificationButton() {
   const rejectFriendRequestM = trpc.rejectFriendRequest.useMutation();
 
   // Get trpc context
-  const trpcContext = trpc.useContext();
+  const utils = trpc.useContext();
 
   function acceptRequest(data: FriendActionData & { addresseeId: string }) {
     acceptFriendRequestM.mutate(
@@ -122,12 +122,12 @@ export default function NotificationButton() {
 
           // Invalidate any queries that could
           // be affected by this update
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
-          trpcContext.getNotificationCount.invalidate();
-          trpcContext.getFriendsList.invalidate();
-          trpcContext.getIncomingFriendRequests.invalidate();
-          trpcContext.getOutgoingFriendRequests.invalidate();
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+          utils.getNotificationCount.invalidate();
+          utils.getFriendsList.invalidate();
+          utils.getIncomingFriendRequests.invalidate();
+          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -157,11 +157,11 @@ export default function NotificationButton() {
 
           // Invalidate any queries that could
           // be affected by this update
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
-          trpcContext.getNotificationCount.invalidate();
-          trpcContext.getIncomingFriendRequests.invalidate();
-          trpcContext.getOutgoingFriendRequests.invalidate();
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+          utils.getNotificationCount.invalidate();
+          utils.getIncomingFriendRequests.invalidate();
+          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -178,8 +178,8 @@ export default function NotificationButton() {
           // Announce the mutation
           announceMutation({ notificationUpdateNew: { notificationId } });
 
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
         }
       }
     );
@@ -201,9 +201,9 @@ export default function NotificationButton() {
             deleteNotification: { notificationId: data.notificationId }
           });
 
-          trpcContext.getNotifications.invalidate();
-          trpcContext.getNewNotificationCount.invalidate();
-          trpcContext.getNotificationCount.invalidate();
+          utils.getNotifications.invalidate();
+          utils.getNewNotificationCount.invalidate();
+          utils.getNotificationCount.invalidate();
         }
       }
     );
@@ -339,8 +339,8 @@ export default function NotificationButton() {
     //           },
     //           {
     //             onSuccess: () => {
-    //               trpcContext.getNotifications.invalidate();
-    //               trpcContext.getNewNotificationCount.invalidate();
+    //               utils.getNotifications.invalidate();
+    //               utils.getNewNotificationCount.invalidate();
     //             }
     //           }
     //         );

@@ -6,11 +6,61 @@ import {
 } from '@/src/lib/websocket/ws-query-tracker-context';
 import { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/clerk-react';
+import { trpc } from '@/src/utils/trpc';
 
 export default function WsQueryTrackerProvider({
   children
 }: PropsWithChildren): JSX.Element {
   const { isLoaded, isSignedIn, user } = useUser();
+
+  // Get trpc utils
+  const utils = trpc.useContext();
+
+  function handleMutationMsg(mutation: string) {
+    // Invalidate the queries affected by the
+    // specific mutation
+    if (mutation === 'createPlayer') {
+      utils.getPlayer.invalidate();
+    } else if (mutation === 'updatePlayer') {
+      utils.getPlayer.invalidate();
+    } else if (mutation === 'createFriendRequest') {
+      utils.findFriends.invalidate();
+      utils.friendRequestExists.invalidate();
+      utils.getIncomingFriendRequests.invalidate();
+      utils.getOutgoingFriendRequests.invalidate();
+      utils.getNewNotificationCount.invalidate();
+      utils.getNotificationCount.invalidate();
+      utils.getNotifications.invalidate();
+    } else if (mutation === 'deleteFriendRequest') {
+      utils.friendRequestExists.invalidate();
+      utils.getIncomingFriendRequests.invalidate();
+      utils.getOutgoingFriendRequests.invalidate();
+      utils.findFriends.invalidate();
+    } else if (mutation === 'acceptFriendRequest') {
+      utils.getNotifications.invalidate();
+      utils.getNewNotificationCount.invalidate();
+      utils.getNotificationCount.invalidate();
+      utils.getFriendsList.invalidate();
+      utils.getIncomingFriendRequests.invalidate();
+      utils.getOutgoingFriendRequests.invalidate();
+    } else if (mutation === 'rejectFriendRequest') {
+      utils.getNotifications.invalidate();
+      utils.getNewNotificationCount.invalidate();
+      utils.getNotificationCount.invalidate();
+      utils.getIncomingFriendRequests.invalidate();
+      utils.getOutgoingFriendRequests.invalidate();
+    } else if (mutation === 'notificationUpdateNew') {
+      utils.getNotifications.invalidate();
+      utils.getNewNotificationCount.invalidate();
+    } else if (mutation === 'deleteNotification') {
+      utils.getNotifications.invalidate();
+      utils.getNewNotificationCount.invalidate();
+      utils.getNotificationCount.invalidate();
+    } else if (mutation === 'deleteFriend') {
+      utils.findFriends.invalidate();
+      utils.getFriendsList.invalidate();
+    }
+  }
 
   // Use the websocket
   const { connState, sendData } = useWebsocket({
@@ -19,8 +69,10 @@ export default function WsQueryTrackerProvider({
     onOpen: () => {
       return;
     },
-    onData: (/*data*/) => {
-      // console.log(`ws data: ${JSON.stringify(data, null, 2)}`);
+    onData: (data) => {
+      if (Object.prototype.hasOwnProperty.call(data, 'mutation')) {
+        handleMutationMsg((data as { mutation: string }).mutation);
+      }
       return;
     }
   });
@@ -76,9 +128,9 @@ export default function WsQueryTrackerProvider({
   useEffect(() => {
     if (connState === 'CONNECTED') {
       if (isLoaded && isSignedIn) {
-        sendData({ currentUser: user.id });
+        sendData({ playerId: user.id });
       } else {
-        sendData({ currentUser: null });
+        sendData({ playerId: null });
       }
     }
   }, [connState, sendData, isLoaded, isSignedIn, user]);
