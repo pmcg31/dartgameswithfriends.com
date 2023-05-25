@@ -143,20 +143,45 @@ export async function acceptFriendRequest(
     where: { requesterId, addresseeId }
   });
   if (count === 1) {
-    // There is a pending request; create a new
-    // Friendship record using the lower id as
-    // side A
-    await prisma.friendship.create({
-      data: {
-        playerAId: requesterId < addresseeId ? requesterId : addresseeId,
-        playerBId: requesterId < addresseeId ? addresseeId : requesterId
-      }
+    // Get addressee handle
+    const addresseePlayer = await prisma.player.findUnique({
+      where: { id: addresseeId },
+      select: { handle: true }
     });
 
-    // Delete the request
-    await prisma.friendshipRequest.delete({
-      where: { requesterId_addresseeId: { requesterId, addresseeId } }
-    });
+    await prisma.$transaction([
+      // There is a pending request; create a new
+      // Friendship record using the lower id as
+      // side A
+      prisma.friendship.create({
+        data: {
+          playerAId: requesterId < addresseeId ? requesterId : addresseeId,
+          playerBId: requesterId < addresseeId ? addresseeId : requesterId
+        }
+      }),
+
+      // Delete the request
+      prisma.friendshipRequest.delete({
+        where: { requesterId_addresseeId: { requesterId, addresseeId } }
+      }),
+
+      // Create a notification for the requester
+      prisma.notification.create({
+        data: {
+          playerId: requesterId,
+          isNew: true,
+          text: JSON.stringify({
+            kind: 'sysNotify',
+            data: {
+              subject: `@${
+                addresseePlayer?.handle || 'unknown'
+              } has accepted your friend request!`,
+              body: 'Congratulations! 🎉'
+            }
+          })
+        }
+      })
+    ]);
 
     // Blindly delete a request coming the other
     // way in case it exists
@@ -178,29 +203,6 @@ export async function acceptFriendRequest(
       }
     }
 
-    // Get addressee handle
-    const addresseePlayer = await prisma.player.findUnique({
-      where: { id: addresseeId },
-      select: { handle: true }
-    });
-
-    // Create a notification for the requester
-    await prisma.notification.create({
-      data: {
-        playerId: requesterId,
-        isNew: true,
-        text: JSON.stringify({
-          kind: 'sysNotify',
-          data: {
-            subject: `@${
-              addresseePlayer?.handle || 'unknown'
-            } has accepted your friend request!`,
-            body: 'Congratulations! 🎉'
-          }
-        })
-      }
-    });
-
     return true;
   } else {
     // No pending friend request for those ids
@@ -217,33 +219,35 @@ export async function rejectFriendRequest(
     where: { requesterId, addresseeId }
   });
   if (count === 1) {
-    // There is a pending request; delete it
-    await prisma.friendshipRequest.delete({
-      where: { requesterId_addresseeId: { requesterId, addresseeId } }
-    });
-
     // Get addressee handle
     const addresseePlayer = await prisma.player.findUnique({
       where: { id: addresseeId },
       select: { handle: true }
     });
 
-    // Create a notification for the requester
-    await prisma.notification.create({
-      data: {
-        playerId: requesterId,
-        isNew: true,
-        text: JSON.stringify({
-          kind: 'sysNotify',
-          data: {
-            subject: `@${
-              addresseePlayer?.handle || 'unknown'
-            } has rejected your friend request`,
-            body: 'Better luck next time!'
-          }
-        })
-      }
-    });
+    await prisma.$transaction([
+      // There is a pending request; delete it
+      prisma.friendshipRequest.delete({
+        where: { requesterId_addresseeId: { requesterId, addresseeId } }
+      }),
+
+      // Create a notification for the requester
+      prisma.notification.create({
+        data: {
+          playerId: requesterId,
+          isNew: true,
+          text: JSON.stringify({
+            kind: 'sysNotify',
+            data: {
+              subject: `@${
+                addresseePlayer?.handle || 'unknown'
+              } has rejected your friend request`,
+              body: 'Better luck next time!'
+            }
+          })
+        }
+      })
+    ]);
 
     return true;
   } else {
@@ -309,24 +313,25 @@ export async function createFriendRequest(
   addresseeId: string
 ): Promise<FriendshipRequest> {
   // Create friend request
-  const fr = await prisma.friendshipRequest.create({
-    data: { requesterId, addresseeId }
-  });
+  const [fr] = await prisma.$transaction([
+    prisma.friendshipRequest.create({
+      data: { requesterId, addresseeId }
+    }),
 
-  // Create a notification for the addressee
-  await prisma.notification.create({
-    data: {
-      playerId: addresseeId,
-      isNew: true,
-      text: JSON.stringify({
-        kind: 'frNotify',
-        data: {
-          from: requesterId,
-          createdAt: fr.createdAt
-        }
-      })
-    }
-  });
+    // Create a notification for the addressee
+    prisma.notification.create({
+      data: {
+        playerId: addresseeId,
+        isNew: true,
+        text: JSON.stringify({
+          kind: 'frNotify',
+          data: {
+            from: requesterId
+          }
+        })
+      }
+    })
+  ]);
 
   // Return the friend request
   return fr;
