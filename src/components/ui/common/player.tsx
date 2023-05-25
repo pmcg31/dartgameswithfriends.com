@@ -1,9 +1,9 @@
 import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 import { trpc } from '@/src/utils/trpc';
-import { Avatar, HStack, Text, VStack } from '@chakra-ui/react';
+import { Avatar, Box, Grid, HStack, Text, VStack } from '@chakra-ui/react';
 import { CSSProperties } from 'react';
 import { IconContext } from 'react-icons';
-import { BsPerson } from 'react-icons/bs';
+import { BsFillCircleFill, BsPerson } from 'react-icons/bs';
 
 export default function Player({
   playerId,
@@ -45,15 +45,48 @@ export default function Player({
 
   return (
     <HStack sx={sx}>
-      <IconContext.Provider value={{ size: '1.5rem' }}>
+      <Grid gridArea={'cell'} isolation={'isolate'}>
+        <IconContext.Provider value={{ size: '1.5rem' }}>
+          {getPlayerQ.isSuccess &&
+          getPlayerQ.data &&
+          getPlayerQ.data.profileImageUrl ? (
+            <Avatar
+              src={getPlayerQ.data.profileImageUrl}
+              size={iconSize}
+              style={{
+                gridArea: 'cell',
+                zIndex: -1,
+                alignSelf: 'center',
+                justifySelf: 'center'
+              }}
+            />
+          ) : (
+            <BsPerson
+              style={{
+                gridArea: 'cell',
+                zIndex: -1,
+                alignSelf: 'center',
+                justifySelf: 'center'
+              }}
+            />
+          )}
+        </IconContext.Provider>
         {getPlayerQ.isSuccess &&
-        getPlayerQ.data &&
-        getPlayerQ.data.profileImageUrl ? (
-          <Avatar src={getPlayerQ.data.profileImageUrl} size={iconSize} />
-        ) : (
-          <BsPerson />
-        )}
-      </IconContext.Provider>
+          getPlayerQ.data &&
+          getPlayerQ.data.isOnline && (
+            <Box gridArea={'cell'} alignSelf={'end'} justifySelf={'end'}>
+              <IconContext.Provider value={{ size: '0.65rem' }}>
+                <BsFillCircleFill
+                  color={'#0f0'}
+                  style={{
+                    gridArea: 'cell',
+                    zIndex: -1
+                  }}
+                />
+              </IconContext.Provider>
+            </Box>
+          )}
+      </Grid>
       <VStack align={'start'}>
         <Text fontSize={fontSize} fontWeight={700} lineHeight={'80%'}>
           {getPlayerQ.isSuccess && getPlayerQ.data && getPlayerQ.data.handle}
