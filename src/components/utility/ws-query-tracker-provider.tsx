@@ -16,51 +16,65 @@ export default function WsQueryTrackerProvider({
   // Get trpc utils
   const utils = trpc.useContext();
 
-  function handleMutationMsg(mutation: string) {
-    // Invalidate the queries affected by the
-    // specific mutation
-    if (mutation === 'createPlayer') {
-      utils.getPlayer.invalidate();
-    } else if (mutation === 'updatePlayer') {
-      utils.getPlayer.invalidate();
-    } else if (mutation === 'createFriendRequest') {
-      utils.findFriends.invalidate();
-      utils.friendRequestExists.invalidate();
-      utils.getIncomingFriendRequests.invalidate();
-      utils.getOutgoingFriendRequests.invalidate();
-      utils.getNewNotificationCount.invalidate();
-      utils.getNotificationCount.invalidate();
-      utils.getNotifications.invalidate();
-    } else if (mutation === 'deleteFriendRequest') {
-      utils.friendRequestExists.invalidate();
-      utils.getIncomingFriendRequests.invalidate();
-      utils.getOutgoingFriendRequests.invalidate();
-      utils.findFriends.invalidate();
-    } else if (mutation === 'acceptFriendRequest') {
-      utils.getNotifications.invalidate();
-      utils.getNewNotificationCount.invalidate();
-      utils.getNotificationCount.invalidate();
-      utils.getFriendsList.invalidate();
-      utils.getIncomingFriendRequests.invalidate();
-      utils.getOutgoingFriendRequests.invalidate();
-    } else if (mutation === 'rejectFriendRequest') {
-      utils.getNotifications.invalidate();
-      utils.getNewNotificationCount.invalidate();
-      utils.getNotificationCount.invalidate();
-      utils.getIncomingFriendRequests.invalidate();
-      utils.getOutgoingFriendRequests.invalidate();
-    } else if (mutation === 'notificationUpdateNew') {
-      utils.getNotifications.invalidate();
-      utils.getNewNotificationCount.invalidate();
-    } else if (mutation === 'deleteNotification') {
-      utils.getNotifications.invalidate();
-      utils.getNewNotificationCount.invalidate();
-      utils.getNotificationCount.invalidate();
-    } else if (mutation === 'deleteFriend') {
-      utils.findFriends.invalidate();
-      utils.getFriendsList.invalidate();
-    }
-  }
+  const handleMutationMsg = useCallback(
+    (mutation: string) => {
+      // Invalidate the queries affected by the
+      // specific mutation
+      if (mutation === 'createPlayer') {
+        utils.getPlayer.invalidate();
+      } else if (mutation === 'updatePlayer') {
+        utils.getPlayer.invalidate();
+      } else if (mutation === 'createFriendRequest') {
+        utils.findFriends.invalidate();
+        utils.friendRequestExists.invalidate();
+        utils.getIncomingFriendRequests.invalidate();
+        utils.getOutgoingFriendRequests.invalidate();
+        utils.getNewNotificationCount.invalidate();
+        utils.getNotificationCount.invalidate();
+        utils.getNotifications.invalidate();
+      } else if (mutation === 'deleteFriendRequest') {
+        utils.friendRequestExists.invalidate();
+        utils.getIncomingFriendRequests.invalidate();
+        utils.getOutgoingFriendRequests.invalidate();
+        utils.findFriends.invalidate();
+      } else if (mutation === 'acceptFriendRequest') {
+        utils.getNotifications.invalidate();
+        utils.getNewNotificationCount.invalidate();
+        utils.getNotificationCount.invalidate();
+        utils.getFriendsList.invalidate();
+        utils.getIncomingFriendRequests.invalidate();
+        utils.getOutgoingFriendRequests.invalidate();
+      } else if (mutation === 'rejectFriendRequest') {
+        utils.getNotifications.invalidate();
+        utils.getNewNotificationCount.invalidate();
+        utils.getNotificationCount.invalidate();
+        utils.getIncomingFriendRequests.invalidate();
+        utils.getOutgoingFriendRequests.invalidate();
+      } else if (mutation === 'notificationUpdateNew') {
+        utils.getNotifications.invalidate();
+        utils.getNewNotificationCount.invalidate();
+      } else if (mutation === 'deleteNotification') {
+        utils.getNotifications.invalidate();
+        utils.getNewNotificationCount.invalidate();
+        utils.getNotificationCount.invalidate();
+      } else if (mutation === 'deleteFriend') {
+        utils.findFriends.invalidate();
+        utils.getFriendsList.invalidate();
+      }
+    },
+    [utils]
+  );
+
+  const handleAnnouncedMutation = useCallback(
+    (data: TrackMutationData) => {
+      for (const prop in data) {
+        if (Object.prototype.hasOwnProperty.call(data, prop)) {
+          handleMutationMsg(prop);
+        }
+      }
+    },
+    [handleMutationMsg]
+  );
 
   // Use the websocket
   const { connState, sendData } = useWebsocket({
@@ -116,13 +130,14 @@ export default function WsQueryTrackerProvider({
   // to the ws server
   const announceMutation = useCallback(
     (data: TrackMutationData) => {
+      handleAnnouncedMutation(data);
       if (connState === 'CONNECTED') {
         sendData({ mutation: data });
       } else {
         announcedMutations.current.push(data);
       }
     },
-    [connState, sendData]
+    [connState, sendData, handleAnnouncedMutation]
   );
 
   useEffect(() => {

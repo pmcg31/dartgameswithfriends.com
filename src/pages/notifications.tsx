@@ -48,9 +48,6 @@ export default function Notifications() {
   // Set up mutation for updating new status of notification
   const notificationUpdateNewM = trpc.notificationUpdateNew.useMutation();
 
-  // Get trpc context
-  const utils = trpc.useContext();
-
   function acceptRequest(data: FriendActionData & { addresseeId: string }) {
     acceptFriendRequestM.mutate(
       {
@@ -58,7 +55,12 @@ export default function Notifications() {
         addresseeId: data.addresseeId
       },
       {
-        onError: () => {
+        onError: (error) => {
+          console.log(
+            `Accept friend request (notifications) error: ${JSON.stringify(
+              error
+            )}`
+          );
           toast({
             description:
               'Oops! Something went wrong and your friend request could not be accepted'
@@ -72,15 +74,6 @@ export default function Notifications() {
               addresseeId: data.addresseeId
             }
           });
-
-          // Invalidate any queries that could
-          // be affected by this update
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
-          utils.getFriendsList.invalidate();
-          utils.getIncomingFriendRequests.invalidate();
-          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -93,7 +86,12 @@ export default function Notifications() {
         addresseeId: data.addresseeId
       },
       {
-        onError: () => {
+        onError: (error) => {
+          console.log(
+            `Reject friend request (notifications) error: ${JSON.stringify(
+              error
+            )}`
+          );
           toast({
             description:
               'Oops! Something went wrong and your friend request could not be rejected'
@@ -107,14 +105,6 @@ export default function Notifications() {
               addresseeId: data.addresseeId
             }
           });
-
-          // Invalidate any queries that could
-          // be affected by this update
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
-          utils.getIncomingFriendRequests.invalidate();
-          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -134,9 +124,6 @@ export default function Notifications() {
               notificationId
             }
           });
-
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
         }
       }
     );
@@ -159,10 +146,6 @@ export default function Notifications() {
               notificationId: data.notificationId
             }
           });
-
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
         }
       }
     );

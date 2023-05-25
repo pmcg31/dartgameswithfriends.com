@@ -35,9 +35,6 @@ export default function Friends() {
   // Set up mutation for delete friend
   const deleteFriendM = trpc.deleteFriend.useMutation();
 
-  // Get trpc utils
-  const utils = trpc.useContext();
-
   let content: JSX.Element | null = null;
   if (isLoaded) {
     if (isSignedIn) {
@@ -69,7 +66,10 @@ export default function Friends() {
                         playerId2
                       },
                       {
-                        onError: () => {
+                        onError: (error) => {
+                          console.log(
+                            `delete friend error: ${JSON.stringify(error)}`
+                          );
                           toast({
                             description:
                               'Oops! Something went wrong and your friend could not be removed'
@@ -84,11 +84,6 @@ export default function Friends() {
                           announceMutation({
                             deleteFriend: { playerId1, playerId2 }
                           });
-
-                          // Invalidate any queries that could
-                          // be affected by this update
-                          utils.findFriends.invalidate();
-                          utils.getFriendsList.invalidate();
                         }
                       }
                     );
@@ -105,7 +100,12 @@ export default function Friends() {
                         addresseeId: user.id
                       },
                       {
-                        onError: () => {
+                        onError: (error) => {
+                          console.log(
+                            `accept friend request error: ${JSON.stringify(
+                              error
+                            )}`
+                          );
                           toast({
                             description:
                               'Oops! Something went wrong and your friend request could not be accepted'
@@ -119,15 +119,6 @@ export default function Friends() {
                               addresseeId: user.id
                             }
                           });
-
-                          // Invalidate any queries that could
-                          // be affected by this update
-                          utils.getNotifications.invalidate();
-                          utils.getNewNotificationCount.invalidate();
-                          utils.getNotificationCount.invalidate();
-                          utils.getFriendsList.invalidate();
-                          utils.getIncomingFriendRequests.invalidate();
-                          utils.getOutgoingFriendRequests.invalidate();
                         }
                       }
                     );
@@ -143,7 +134,12 @@ export default function Friends() {
                         addresseeId: user.id
                       },
                       {
-                        onError: () => {
+                        onError: (error) => {
+                          console.log(
+                            `Reject friend request error: ${JSON.stringify(
+                              error
+                            )}`
+                          );
                           toast({
                             description:
                               'Oops! Something went wrong and your friend request could not be rejected'
@@ -157,14 +153,6 @@ export default function Friends() {
                               addresseeId: user.id
                             }
                           });
-
-                          // Invalidate any queries that could
-                          // be affected by this update
-                          utils.getNotifications.invalidate();
-                          utils.getNewNotificationCount.invalidate();
-                          utils.getNotificationCount.invalidate();
-                          utils.getIncomingFriendRequests.invalidate();
-                          utils.getOutgoingFriendRequests.invalidate();
                         }
                       }
                     );
@@ -186,7 +174,12 @@ export default function Friends() {
                         addresseeId
                       },
                       {
-                        onError: () => {
+                        onError: (error) => {
+                          console.log(
+                            `Delete friend request error: ${JSON.stringify(
+                              error
+                            )}`
+                          );
                           toast({
                             description:
                               'Oops! Something went wrong and your friend request could not be rejected'
@@ -204,13 +197,6 @@ export default function Friends() {
                               addresseeId
                             }
                           });
-
-                          // Invalidate any queries that could
-                          // be affected by this update
-                          utils.friendRequestExists.invalidate();
-                          utils.getIncomingFriendRequests.invalidate();
-                          utils.getOutgoingFriendRequests.invalidate();
-                          utils.findFriends.invalidate();
                         }
                       }
                     );
@@ -228,7 +214,12 @@ export default function Friends() {
                         addresseeId
                       },
                       {
-                        onError: () => {
+                        onError: (error) => {
+                          console.log(
+                            `Create friend request error: ${JSON.stringify(
+                              error
+                            )}`
+                          );
                           toast({
                             description:
                               'Oops! Something went wrong and your friend request could not be sent'
@@ -246,16 +237,6 @@ export default function Friends() {
                               addresseeId
                             }
                           });
-
-                          // Invalidate any queries that could
-                          // be affected by this update
-                          utils.findFriends.invalidate();
-                          utils.friendRequestExists.invalidate();
-                          utils.getIncomingFriendRequests.invalidate();
-                          utils.getOutgoingFriendRequests.invalidate();
-                          utils.getNewNotificationCount.invalidate();
-                          utils.getNotificationCount.invalidate();
-                          utils.getNotifications.invalidate();
                         }
                       }
                     );

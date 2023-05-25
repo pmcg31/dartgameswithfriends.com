@@ -95,9 +95,6 @@ export default function NotificationButton() {
   const acceptFriendRequestM = trpc.acceptFriendRequest.useMutation();
   const rejectFriendRequestM = trpc.rejectFriendRequest.useMutation();
 
-  // Get trpc context
-  const utils = trpc.useContext();
-
   function acceptRequest(data: FriendActionData & { addresseeId: string }) {
     acceptFriendRequestM.mutate(
       {
@@ -105,7 +102,8 @@ export default function NotificationButton() {
         addresseeId: data.addresseeId
       },
       {
-        onError: () => {
+        onError: (error) => {
+          console.log(`accept friend request error: ${JSON.stringify(error)}`);
           toast({
             description:
               'Oops! Something went wrong and your friend request could not be accepted'
@@ -119,15 +117,6 @@ export default function NotificationButton() {
               addresseeId: data.addresseeId
             }
           });
-
-          // Invalidate any queries that could
-          // be affected by this update
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
-          utils.getFriendsList.invalidate();
-          utils.getIncomingFriendRequests.invalidate();
-          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -140,7 +129,8 @@ export default function NotificationButton() {
         addresseeId: data.addresseeId
       },
       {
-        onError: () => {
+        onError: (error) => {
+          console.log(`reject friend request error: ${JSON.stringify(error)}`);
           toast({
             description:
               'Oops! Something went wrong and your friend request could not be rejected'
@@ -154,14 +144,6 @@ export default function NotificationButton() {
               addresseeId: data.addresseeId
             }
           });
-
-          // Invalidate any queries that could
-          // be affected by this update
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
-          utils.getIncomingFriendRequests.invalidate();
-          utils.getOutgoingFriendRequests.invalidate();
         }
       }
     );
@@ -177,9 +159,6 @@ export default function NotificationButton() {
         onSuccess: () => {
           // Announce the mutation
           announceMutation({ notificationUpdateNew: { notificationId } });
-
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
         }
       }
     );
@@ -200,10 +179,6 @@ export default function NotificationButton() {
           announceMutation({
             deleteNotification: { notificationId: data.notificationId }
           });
-
-          utils.getNotifications.invalidate();
-          utils.getNewNotificationCount.invalidate();
-          utils.getNotificationCount.invalidate();
         }
       }
     );
