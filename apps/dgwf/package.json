@@ -10,8 +10,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "tc": "tsc --noEmit",
-    "postinstall": "prisma generate"
+    "type-check": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "pre-commit": "lint-staged"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.3",
