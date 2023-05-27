@@ -11,8 +11,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "postinstall": "prisma generate",
-    "pre-commit": "lint-staged"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.3",
@@ -45,7 +44,6 @@
     "@clerk/types": "^3.36.0",
     "eslint-config-custom": "*",
     "husky": "^8.0.3",
-    "lint-staged": "^13.2.0",
     "prettier": "^2.8.7",
     "prisma": "^4.14.1",
     "ts-node": "^10.9.1"
