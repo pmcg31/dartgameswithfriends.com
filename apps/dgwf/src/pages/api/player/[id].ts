@@ -1,11 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Player } from '@prisma/client';
-import {
-  createPlayer,
-  deletePlayer,
-  getPlayer,
-  updatePlayer
-} from '@/src/lib/db-helper';
+import { Player } from 'db';
+import { createPlayer, deletePlayer, getPlayer, updatePlayer } from 'db';
 
 type Error = {
   error: string;

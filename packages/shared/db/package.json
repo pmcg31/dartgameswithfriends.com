@@ -1,0 +1,24 @@
+{
+  "name": "db",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "license": "MIT",
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
+  "scripts": {
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.14.1",
+    "@types/node": "18.13.0"
+  },
+  "devDependencies": {
+    "eslint-config-custom": "*",
+    "prisma": "^4.14.1",
+    "ts-node": "^10.9.1"
+  }
+}

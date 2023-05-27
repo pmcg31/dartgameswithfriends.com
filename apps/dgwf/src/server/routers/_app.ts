@@ -18,7 +18,7 @@ import {
   createFriendRequest,
   deleteFriendRequest,
   deleteFriend
-} from '@/src/lib/db-helper';
+} from 'db';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
 

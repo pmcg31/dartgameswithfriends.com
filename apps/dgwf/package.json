@@ -2,18 +2,17 @@
   "name": "dgwf",
   "version": "0.1.0",
   "private": true,
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
-  },
+  "type": "module",
   "scripts": {
     "dev": "next dev -p 3180",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "postinstall": "prisma generate"
+    "pre-commit": "lint-staged"
   },
   "dependencies": {
+    "@chakra-ui/anatomy": "^2.1.1",
     "@chakra-ui/react": "^2.5.3",
     "@clerk/clerk-react": "^4.17.0",
     "@clerk/nextjs": "^4.17.0",
@@ -21,16 +20,17 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@next/font": "13.1.6",
-    "@prisma/client": "^4.14.1",
     "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "^10.25.1",
     "@trpc/next": "^10.25.1",
     "@trpc/react-query": "^10.25.1",
     "@trpc/server": "^10.25.1",
+    "@types/lodash": "^4.14.195",
     "@types/node": "18.13.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.10",
     "date-fns": "^2.30.0",
+    "db": "workspace:*",
     "framer-motion": "^10.9.1",
     "lodash": "^4.17.21",
     "next": "13.1.6",
@@ -42,10 +42,10 @@
   },
   "devDependencies": {
     "@clerk/types": "^3.36.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^4.14.1",
     "eslint-config-custom": "*",
-    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
     "prettier": "^2.8.7",
-    "prisma": "^4.14.1",
     "ts-node": "^10.9.1"
   }
 }

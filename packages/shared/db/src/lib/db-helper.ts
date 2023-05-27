@@ -4,7 +4,7 @@ import {
   FriendshipRequest,
   Friendship
 } from '@prisma/client';
-import prisma from '@/src/lib/prisma';
+import prisma from './prisma';
 
 export async function getPlayer(id: string): Promise<Player | null> {
   return prisma.player.findUnique({ where: { id: id } });
