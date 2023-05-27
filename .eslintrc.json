@@ -1,0 +1,4 @@
+{
+  "root": true,
+  "extends": ["custom-node"] // Tells ESLint to use the "eslint-config-custom-node" package
+}

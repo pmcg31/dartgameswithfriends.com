@@ -12,8 +12,7 @@
     "dev": "tsc && NODE_ENV=dev node dist/app.js",
     "build": "tsc",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --ext .ts",
-    "pre-commit": "lint-staged"
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
@@ -28,7 +27,6 @@
     "eslint-config-custom-node": "workspace:*",
     "express": "^4.18.2",
     "express-ws": "^5.0.2",
-    "ws": "^8.13.0",
-    "lint-staged": "^13.2.0"
+    "ws": "^8.13.0"
   }
 }

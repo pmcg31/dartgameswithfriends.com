@@ -8,8 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "pre-commit": "lint-staged"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@chakra-ui/anatomy": "^2.1.1",
@@ -44,7 +43,6 @@
     "@clerk/types": "^3.36.0",
     "@prisma/nextjs-monorepo-workaround-plugin": "^4.14.1",
     "eslint-config-custom-next": "workspace:*",
-    "lint-staged": "^13.2.0",
     "prettier": "^2.8.7",
     "ts-node": "^10.9.1"
   }

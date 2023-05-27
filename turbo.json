@@ -11,9 +11,6 @@
       "dependsOn": ["build"],
       "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
     },
-    "pre-commit": {
-      "cache": false
-    },
     "lint": {
       "outputs": []
     },
