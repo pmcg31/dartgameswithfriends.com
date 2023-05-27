@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "pre-commit": "turbo run pre-commit",
+    "lint": "turbo run lint",
     "prepare": "husky install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
