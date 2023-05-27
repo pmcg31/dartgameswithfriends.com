@@ -43,7 +43,7 @@
   "devDependencies": {
     "@clerk/types": "^3.36.0",
     "@prisma/nextjs-monorepo-workaround-plugin": "^4.14.1",
-    "eslint-config-custom": "*",
+    "eslint-config-custom-next": "workspace:*",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.7",
     "ts-node": "^10.9.1"
