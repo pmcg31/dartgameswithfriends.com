@@ -15,6 +15,7 @@ type ConnMapValue = {
 // };
 
 const connectionMap = new Map<WebSocket, ConnMapValue>();
+const onlineCountMap = new Map<string, number>();
 
 async function updatePlayerOnlineStatus(
   playerId: string,
@@ -37,8 +38,36 @@ async function updatePlayerOnlineStatus(
       ws.send(msg);
     }
   } catch (error) {
-    console.log('updatePlayerOnlineStatus: error:');
+    console.log('onPlayerOnlineStatusChanged: error:');
     console.log(error);
+  }
+}
+
+async function onPlayerOnlineStatusChanged(
+  playerId: string,
+  isOnline: boolean
+): Promise<void> {
+  const currentCount = onlineCountMap.get(playerId);
+  if (currentCount) {
+    if (isOnline) {
+      onlineCountMap.set(playerId, currentCount + 1);
+    } else {
+      if (currentCount === 1) {
+        // Count hit zero; player is offline
+        onlineCountMap.delete(playerId);
+
+        // Update db
+        updatePlayerOnlineStatus(playerId, isOnline);
+      } else {
+        onlineCountMap.set(playerId, currentCount - 1);
+      }
+    }
+  } else {
+    // First time seeing player
+    onlineCountMap.set(playerId, 1);
+
+    // Update db
+    updatePlayerOnlineStatus(playerId, isOnline);
   }
 }
 
@@ -51,14 +80,14 @@ function handleMessage(e: MessageEvent) {
         console.log(
           `${conn.remoteAddress}[${conn.remotePort}] Player offline: ${conn.playerId}`
         );
-        updatePlayerOnlineStatus(conn.playerId, false);
+        onPlayerOnlineStatusChanged(conn.playerId, false);
       }
       conn.playerId = data.playerId;
       if (conn.playerId) {
         console.log(
           `${conn.remoteAddress}[${conn.remotePort}] Player online: ${data.playerId}`
         );
-        updatePlayerOnlineStatus(conn.playerId, true);
+        onPlayerOnlineStatusChanged(conn.playerId, true);
       }
     } else if (Object.prototype.hasOwnProperty.call(data, 'usingQuery')) {
       console.log(
@@ -101,7 +130,7 @@ function handleClose(e: CloseEvent) {
       console.log(
         `${conn.remoteAddress}[${conn.remotePort}] Player offline: ${conn.playerId}`
       );
-      updatePlayerOnlineStatus(conn.playerId, false);
+      onPlayerOnlineStatusChanged(conn.playerId, false);
     }
 
     // Remove all query map values using this
