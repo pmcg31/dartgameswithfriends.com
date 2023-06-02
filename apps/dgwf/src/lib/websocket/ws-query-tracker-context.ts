@@ -23,6 +23,9 @@ export type TrackMutationData = {
   createFriendRequest?: { requesterId: string; addresseeId: string };
   deleteFriendRequest?: { requesterId: string; addresseeId: string };
   deleteFriend?: { playerId1: string; playerId2: string };
+  getVConf?: { id: string };
+  createVConf?: { id: string; playerId1: string; playerId2: string };
+  updateVConf?: { id: string };
 };
 
 export const WsQueryTrackerContext = createContext<{

@@ -2,7 +2,8 @@ import {
   Player,
   Notification,
   FriendshipRequest,
-  Friendship
+  Friendship,
+  VConf
 } from '@prisma/client';
 import prisma from './prisma';
 
@@ -356,6 +357,76 @@ export async function deleteFriend(
         playerAId: playerId1 < playerId2 ? playerId1 : playerId2,
         playerBId: playerId1 < playerId2 ? playerId2 : playerId1
       }
+    }
+  });
+}
+
+export async function getVConf(id: string): Promise<VConf | null> {
+  return prisma.vConf.findUnique({ where: { id } });
+}
+
+export async function createVConf(
+  requesterId: string,
+  addresseeId: string
+): Promise<VConf> {
+  // The following mutations must all
+  // succeed for any to commit
+  return prisma.$transaction(async (tx) => {
+    // Get requester's handle
+    const requesterPlayer = await prisma.player.findUnique({
+      where: { id: requesterId },
+      select: { handle: true }
+    });
+
+    // Create vconf
+    const vconf = await tx.vConf.create({
+      data: {
+        playerAId: requesterId < addresseeId ? requesterId : addresseeId,
+        playerBId: requesterId < addresseeId ? addresseeId : requesterId
+      }
+    });
+
+    // Create a notification for the addressee
+    await tx.notification.create({
+      data: {
+        playerId: addresseeId,
+        isNew: true,
+        text: JSON.stringify({
+          kind: 'linkNotify',
+          data: {
+            subject: `@${requesterPlayer?.handle || 'unknown'} wants to vchat`,
+            url: `/vconf/${vconf.id}`
+          }
+        })
+      }
+    });
+
+    return vconf;
+  });
+}
+
+export async function updateVConf({
+  id,
+  descriptionA,
+  candidatesA,
+  descriptionB,
+  candidatesB
+}: {
+  id: string;
+  descriptionA?: string;
+  candidatesA?: string;
+  descriptionB?: string;
+  candidatesB?: string;
+}): Promise<VConf> {
+  return prisma.vConf.update({
+    where: {
+      id
+    },
+    data: {
+      descriptionA,
+      candidatesA,
+      descriptionB,
+      candidatesB
     }
   });
 }

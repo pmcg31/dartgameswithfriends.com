@@ -17,7 +17,10 @@ import {
   findFriends,
   createFriendRequest,
   deleteFriendRequest,
-  deleteFriend
+  deleteFriend,
+  getVConf,
+  createVConf,
+  updateVConf
 } from 'db';
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
@@ -143,7 +146,35 @@ export const appRouter = router({
     .input(z.object({ playerId1: z.string(), playerId2: z.string() }))
     .mutation((opts) =>
       deleteFriend(opts.input.playerId1, opts.input.playerId2)
+    ),
+  getVConf: procedure
+    .input(z.object({ id: z.string() }))
+    .query((opts) => getVConf(opts.input.id)),
+  createVConf: procedure
+    .input(z.object({ requesterId: z.string(), addresseeId: z.string() }))
+    .mutation((opts) =>
+      createVConf(opts.input.requesterId, opts.input.addresseeId)
+    ),
+  updateVConf: procedure
+    .input(
+      z
+        .object({
+          id: z.string(),
+          descriptionA: z.string().optional(),
+          candidatesA: z.string().optional(),
+          descriptionB: z.string().optional(),
+          candidatesB: z.string().optional()
+        })
+        .refine(
+          (data) =>
+            !!data.descriptionA ||
+            !!data.candidatesA ||
+            !!data.descriptionB ||
+            !!data.candidatesB,
+          'At least one of (descriptionA, candidatesA, descriptionB, candidatesB) must be defined'
+        )
     )
+    .mutation((opts) => updateVConf(opts.input))
 });
 
 // export type definition of API

@@ -60,6 +60,12 @@ export default function WsQueryTrackerProvider({
       } else if (mutation === 'deleteFriend') {
         utils.findFriends.invalidate();
         utils.getFriendsList.invalidate();
+      } else if (mutation === 'createVConf') {
+        utils.getNotifications.invalidate();
+        utils.getNewNotificationCount.invalidate();
+        utils.getNotificationCount.invalidate();
+      } else if (mutation === 'updateVConf') {
+        utils.getVConf.invalidate();
       }
     },
     [utils]

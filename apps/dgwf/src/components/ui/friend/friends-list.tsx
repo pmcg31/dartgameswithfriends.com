@@ -1,7 +1,7 @@
-import { UnfriendActionData } from '@/src/lib/friend-types';
+import { InviteVChatData, UnfriendActionData } from '@/src/lib/friend-types';
 import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 import { trpc } from '@/src/utils/trpc';
-import { BsPersonX } from 'react-icons/bs';
+import { BsCameraVideo, BsPersonX } from 'react-icons/bs';
 import FriendCard, { FriendCardData } from './friend-card';
 
 function formatFriendSince(when: Date) {
@@ -34,10 +34,12 @@ function formatFriendSince(when: Date) {
 
 export default function FriendsList({
   playerId,
-  onUnfriendClicked
+  onUnfriendClicked,
+  onInviteVChatClicked
 }: {
   playerId: string;
   onUnfriendClicked: (data: UnfriendActionData) => void;
+  onInviteVChatClicked: (data: InviteVChatData) => void;
 }): JSX.Element {
   // Use the websocket query tracker
   const { usingQuery } = useWsQueryTracker();
@@ -90,6 +92,16 @@ export default function FriendsList({
           ),
           buttons: [
             {
+              icon: <BsCameraVideo />,
+              text: 'Invite to Chat',
+              onClick: () => {
+                onInviteVChatClicked({
+                  requesterId: playerId,
+                  addresseeId: id
+                });
+              }
+            },
+            {
               icon: <BsPersonX color={'#f00'} />,
               text: 'Unfriend',
               onClick: () => {
@@ -112,6 +124,16 @@ export default function FriendsList({
             new Date(friendsListQ.data.bSideFriends[bIdx].createdAt)
           ),
           buttons: [
+            {
+              icon: <BsCameraVideo />,
+              text: 'Invite to Chat',
+              onClick: () => {
+                onInviteVChatClicked({
+                  requesterId: playerId,
+                  addresseeId: id
+                });
+              }
+            },
             {
               icon: <BsPersonX color={'#f00'} />,
               text: 'Unfriend',

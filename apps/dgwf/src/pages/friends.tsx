@@ -17,6 +17,7 @@ import OutgoingFriendRequests from '@/src/components/ui/friend/outgoing-friend-r
 import { useToast } from '@chakra-ui/react';
 import FindFriends from '@/src/components/ui/friend/find-friends';
 import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
+import router, { useRouter } from 'next/router';
 
 export default function Friends() {
   // Use the websocket query tracker
@@ -34,6 +35,9 @@ export default function Friends() {
 
   // Set up mutation for delete friend
   const deleteFriendM = trpc.deleteFriend.useMutation();
+
+  // Set up mutation for create vconf
+  const createVConfM = trpc.createVConf.useMutation();
 
   let content: JSX.Element | null = null;
   if (isLoaded) {
@@ -84,6 +88,35 @@ export default function Friends() {
                           announceMutation({
                             deleteFriend: { playerId1, playerId2 }
                           });
+                        }
+                      }
+                    );
+                  }}
+                  onInviteVChatClicked={({ requesterId, addresseeId }) => {
+                    createVConfM.mutate(
+                      { requesterId, addresseeId },
+                      {
+                        onError: (error) => {
+                          console.log(
+                            `create vconf error: ${JSON.stringify(error)}`
+                          );
+                          toast({
+                            description:
+                              'Oops! Something went wrong and your chat invite could not be sent'
+                          });
+                        },
+                        onSuccess: (data) => {
+                          // Announce the mutation
+                          announceMutation({
+                            createVConf: {
+                              id: data.id,
+                              playerId1: requesterId,
+                              playerId2: addresseeId
+                            }
+                          });
+
+                          // Go to the chat page
+                          router.push({ pathname: `/vconf/${data.id}` });
                         }
                       }
                     );

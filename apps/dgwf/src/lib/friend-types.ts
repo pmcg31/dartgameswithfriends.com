@@ -12,3 +12,8 @@ export type UnfriendActionData = {
   playerId1: string;
   playerId2: string;
 };
+
+export type InviteVChatData = {
+  requesterId: string;
+  addresseeId: string;
+};

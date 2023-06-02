@@ -2,6 +2,7 @@ import {
   acceptFriendRequest,
   createFriendRequest,
   createPlayer,
+  createVConf,
   deleteFriend,
   deleteFriendRequest,
   deleteNotification,
@@ -15,9 +16,11 @@ import {
   getNotifications,
   getOutgoingFriendRequests,
   getPlayer,
+  getVConf,
   notificationUpdateNew,
   rejectFriendRequest,
-  updatePlayer
+  updatePlayer,
+  updateVConf
 } from './src/lib/db-helper';
 import prisma from './src/lib/prisma';
 import { Player } from '@prisma/client';
@@ -26,6 +29,7 @@ export {
   acceptFriendRequest,
   createFriendRequest,
   createPlayer,
+  createVConf,
   deleteFriend,
   deleteFriendRequest,
   deleteNotification,
@@ -39,9 +43,11 @@ export {
   getNotifications,
   getOutgoingFriendRequests,
   getPlayer,
+  getVConf,
   notificationUpdateNew,
   rejectFriendRequest,
   updatePlayer,
+  updateVConf,
   prisma,
   type Player
 };

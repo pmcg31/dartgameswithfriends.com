@@ -27,6 +27,20 @@ model Player {
   ownerOf          GameRoom[]          @relation("GameRoomOwner")
   groups           GroupMember[]
   gameRooms        GameRoomPlayer[]
+  aSideConfs       VConf[]             @relation("aSideVConf")
+  bSideConfs       VConf[]             @relation("bSideVConf")
+}
+
+model VConf {
+  id           String  @id @default(uuid())
+  playerA      Player  @relation("aSideVConf", fields: [playerAId], references: [id])
+  playerAId    String
+  descriptionA String? @db.Text
+  candidatesA  String? @db.Text
+  playerB      Player  @relation("bSideVConf", fields: [playerBId], references: [id])
+  playerBId    String
+  descriptionB String? @db.Text
+  candidatesB  String? @db.Text
 }
 
 model Notification {
