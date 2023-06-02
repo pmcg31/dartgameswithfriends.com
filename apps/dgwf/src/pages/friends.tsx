@@ -17,7 +17,7 @@ import OutgoingFriendRequests from '@/src/components/ui/friend/outgoing-friend-r
 import { useToast } from '@chakra-ui/react';
 import FindFriends from '@/src/components/ui/friend/find-friends';
 import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
-import router, { useRouter } from 'next/router';
+import router from 'next/router';
 
 export default function Friends() {
   // Use the websocket query tracker
