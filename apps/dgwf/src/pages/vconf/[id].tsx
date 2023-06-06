@@ -366,7 +366,7 @@ export default function VConf() {
               gap={'1rem'}
               color={'#fff'}
             >
-              <video ref={selfView} autoPlay={true}></video>
+              <video ref={selfView} autoPlay={true} muted={true}></video>
               <Player
                 playerId={
                   isUserASide.current
