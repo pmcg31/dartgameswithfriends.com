@@ -1,9 +1,19 @@
 import { useWsQueryTracker } from '@/src/lib/websocket/use-ws-query-tracker';
 import { trpc } from '@/src/utils/trpc';
-import { Avatar, Box, Grid, HStack, Text, VStack } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Flex,
+  Grid,
+  HStack,
+  Text,
+  VStack
+} from '@chakra-ui/react';
 import { CSSProperties } from 'react';
 import { IconContext } from 'react-icons';
-import { BsFillCircleFill, BsPerson } from 'react-icons/bs';
+import { BsFillCircleFill } from 'react-icons/bs';
+import LoadingAnimation from '@/src/components/ui/common/loading-animation';
+import LoadingPlaceholder from '@/src/components/ui/common/loading-placeholder';
 
 export default function Player({
   playerId,
@@ -46,31 +56,34 @@ export default function Player({
   return (
     <HStack sx={sx}>
       <Grid gridArea={'cell'} isolation={'isolate'}>
-        <IconContext.Provider value={{ size: '1.5rem' }}>
-          {getPlayerQ.isSuccess &&
-          getPlayerQ.data &&
-          getPlayerQ.data.profileImageUrl ? (
+        <LoadingPlaceholder isLoaded={getPlayerQ.isSuccess} sx={{ zIndex: -1 }}>
+          <LoadingPlaceholder.Loaded>
             <Avatar
-              src={getPlayerQ.data.profileImageUrl}
+              src={
+                getPlayerQ.data && getPlayerQ.data.profileImageUrl
+                  ? getPlayerQ.data.profileImageUrl
+                  : 'https://www.gravatar.com/avatar?d=mp'
+              }
               size={iconSize}
               style={{
                 gridArea: 'cell',
-                zIndex: -1,
                 alignSelf: 'center',
                 justifySelf: 'center'
               }}
             />
-          ) : (
-            <BsPerson
+          </LoadingPlaceholder.Loaded>
+          <LoadingPlaceholder.NotLoaded>
+            <Avatar
+              src={'https://www.gravatar.com/avatar?d=mp'}
+              size={iconSize}
               style={{
                 gridArea: 'cell',
-                zIndex: -1,
                 alignSelf: 'center',
                 justifySelf: 'center'
               }}
             />
-          )}
-        </IconContext.Provider>
+          </LoadingPlaceholder.NotLoaded>
+        </LoadingPlaceholder>
         {getPlayerQ.isSuccess &&
           getPlayerQ.data &&
           getPlayerQ.data.isOnline && (
@@ -79,8 +92,7 @@ export default function Player({
                 <BsFillCircleFill
                   color={'#0f0'}
                   style={{
-                    gridArea: 'cell',
-                    zIndex: -1
+                    gridArea: 'cell'
                   }}
                 />
               </IconContext.Provider>
@@ -88,9 +100,21 @@ export default function Player({
           )}
       </Grid>
       <VStack align={'start'}>
-        <Text fontSize={fontSize} fontWeight={700} lineHeight={'80%'}>
-          {getPlayerQ.isSuccess && getPlayerQ.data && getPlayerQ.data.handle}
-        </Text>
+        {/* This Flex is only here to provide the same fontSize to both 
+            LoadingAnimation and Text; this creates the animation at the
+            proper size */}
+        <Flex fontSize={fontSize}>
+          <LoadingPlaceholder isLoaded={getPlayerQ.isSuccess}>
+            <LoadingPlaceholder.Loaded>
+              <Text fontWeight={700} lineHeight={'80%'}>
+                {getPlayerQ.data ? getPlayerQ.data.handle : '--'}
+              </Text>
+            </LoadingPlaceholder.Loaded>
+            <LoadingPlaceholder.NotLoaded>
+              <LoadingAnimation />
+            </LoadingPlaceholder.NotLoaded>
+          </LoadingPlaceholder>
+        </Flex>
         {addedText && (
           <Text fontSize={addedTextFontSize} opacity={'50%'} lineHeight={'80%'}>
             {addedText}
