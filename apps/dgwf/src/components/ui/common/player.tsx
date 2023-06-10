@@ -87,8 +87,14 @@ export default function Player({
         {getPlayerQ.isSuccess &&
           getPlayerQ.data &&
           getPlayerQ.data.isOnline && (
-            <Box gridArea={'cell'} alignSelf={'end'} justifySelf={'end'}>
-              <IconContext.Provider value={{ size: '0.65rem' }}>
+            <Box
+              gridArea={'cell'}
+              alignSelf={'end'}
+              justifySelf={'end'}
+              border={'2px solid var(--brand-color)'}
+              borderRadius={'50%'}
+            >
+              <IconContext.Provider value={{ size: '0.7rem' }}>
                 <BsFillCircleFill
                   color={'#0f0'}
                   style={{
